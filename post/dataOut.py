@@ -9,7 +9,7 @@ import os
 
 def createFolderHydro(tag,ER,Re,Le,Ls,volNumb,tol,Xr,S,dtFac,phi,Pe,alpha,Pr,Nu,beta):
     
-    pathHydro = "./0 - Results/{}_beta={}_ER={}_Re={:.2E}_Pr={:.2E}_phi={:.2E}_Pe={:.2E}_alpha={}_Le={}_Ls={}_Volumes={}_dtFac={}_tol={}_Xr={:.5f}_Nu={:.5f}".format(tag,beta,ER,Re,Pr,phi,Pe,alpha,Le,Ls,volNumb,dtFac,tol,Xr/S,Nu)
+    pathHydro = "./0 - Results/{}_beta={}_ER={}_Re={:.1E}_Pr={:.1E}_phi={:.1E}_Pe={:.1E}_alpha={}_Le={}_Ls={}_Volumes={}_dtFac={}_tol={}_Xr={:.3f}_Nu={:.3f}".format(tag,beta,ER,Re,Pr,phi,Pe,alpha,Le,Ls,volNumb,dtFac,tol,Xr/S,Nu)
     os.makedirs(pathHydro)
     print('')
     print('Output folder created!')    
