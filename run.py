@@ -21,7 +21,7 @@ volNumb = 12383# input('Enter volume count: ' )
 Le = 5.0 #input('Enter entrance domain lenght: ')
 Ls = 15.0 #input('Enter expansion domain lenght: ')
 ER = 2.0 #input('Enter expansion ratio')
-beta = 1.0 # grid streching parameter
+beta = 3.0 # grid streching parameter
 
 folderTag = 'test4out'
 
