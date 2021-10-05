@@ -1,6 +1,6 @@
-./0 - Results
-./1 - Papers
-./2 - tecplot
+0 - Results
+1 - Papers
+2 - tecplot
 
 ./grids/ER=1.5
 ./grids/ER=2.0
