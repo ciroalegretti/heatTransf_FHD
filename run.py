@@ -23,10 +23,10 @@ Ls = 15.0 #input('Enter expansion domain lenght: ')
 ER = 2.0 #input('Enter expansion ratio')
 beta = 3.0 # grid streching parameter
 
-folderTag = 'test4out'
+folderTag = 'testeServ'
 
 dtFac = 0.05
-tol = 1E-5
+tol = 1E-3
 #phiArr = np.linspace(0.025,0.25,10)
 #phiArr = np.insert(phiArr,0,1E-5)
 #PeArr = np.logspace(-2,2,5)
