@@ -16,14 +16,14 @@ import time
 
 t0 = time.time()
 
-""" Grids avaliable: 24893,31515,38966,47153,56538,66320,76951,88298,100983 """
+""" Grids avaliable: 12383,19379,28173,38329,50363,63679,78953,95429,113943 """
 volNumb = 12383# input('Enter volume count: ' )
 Le = 5.0 #input('Enter entrance domain lenght: ')
 Ls = 15.0 #input('Enter expansion domain lenght: ')
 ER = 2.0 #input('Enter expansion ratio')
 beta = 3.0 # grid streching parameter
 
-folderTag = 'test4out'
+folderTag = 'testeMag'
 
 dtFac = 0.05
 tol = 1E-5
@@ -33,7 +33,7 @@ tol = 1E-5
 # tolArr = np.logspace(-3,-8,6)
 # PrArray = np.logspace(-1,1,5)
 # alphaArr = np.logspace(-1,1,5)
-# vols = np.array((24893,31515,38966,47153,56538,66320,76951,88298,100983))#,33506,60153,94091,136128,185276))
+# vols = np.array((12383,19379,28173,38329,50363,63679,78953,95429,113943))#,33506,60153,94091,136128,185276))
 # ReArr = np.linspace(50,400,8) #np.array((200.,400))
 # betaArr = np.array((1.0,2.0,3.0,4.0))
 
