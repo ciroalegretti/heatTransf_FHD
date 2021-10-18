@@ -5,17 +5,17 @@ Created on Thu Apr 15 03:22:33 2021
 
 @author: alegretti
 """
-from numba import jit
+from numba import jit,prange
 from pre import idNeighbors
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def fluxHydro_C(flux,h_data,wf,cv,volArr):
     
     flux_c = flux.copy()
 
     k = len(flux)
     
-    for i in range(k):
+    for i in prange(k):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
         
         # Flux in E volume direction
@@ -30,12 +30,12 @@ def fluxHydro_C(flux,h_data,wf,cv,volArr):
     return flux_c
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def fluxHydro_D(flux,h_data,c,wf,cv,volArr):
 
     k = len(flux)
     
-    for i in range(k):
+    for i in prange(k):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
 
         # Flux in E volume direction
