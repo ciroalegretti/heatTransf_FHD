@@ -5,7 +5,7 @@ Created on Wed Jul 28 20:21:44 2021
 
 @author: alegretti
 """
-from numba import jit
+from numba import jit,prange
 from pre import idNeighbors
 
 
@@ -14,7 +14,7 @@ def poissonExplicit(data,volArr,volNodes,CV):
 
     dataPrev = data.copy()
     
-    for i in range(len(volArr)):
+    for i in prange(len(volArr)):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
 
         a = (CV[E,2] - CV[W,2])/(CV[N,3] - CV[i,3])

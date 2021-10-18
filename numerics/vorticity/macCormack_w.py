@@ -7,11 +7,11 @@ Created on Wed Jul 28 21:44:56 2021
 """
 
 import numpy as np
-from numba import jit
+from numba import jit,prange
 from numerics.vorticity import fluxVort
 from pre import idNeighbors
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def macCormack_w(data,magData,re,flux,wf,volArr,cv,dt,pe,phi):
     """ Solves vorticity equation using explicit MacCormack method"""
 
@@ -29,7 +29,7 @@ def macCormack_w(data,magData,re,flux,wf,volArr,cv,dt,pe,phi):
     fluxconvP = fluxVort.fluxHydro_C(flux,data,wf,cv,volArr)
     fluxdiffP = fluxVort.fluxHydro_D(flux,data,re,wf,cv,volArr)
     
-    for i in range(n):
+    for i in prange(n):
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
         dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]
         
@@ -45,7 +45,7 @@ def macCormack_w(data,magData,re,flux,wf,volArr,cv,dt,pe,phi):
     fluxconvC = fluxVort.fluxHydro_C(fluxconvP,dataP,wf,cv,volArr)
     fluxdiffC = fluxVort.fluxHydro_D(fluxdiffP,dataP,re,wf,cv,volArr)
 
-    for i in range(n):
+    for i in prange(n):
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
         dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]
 

@@ -5,7 +5,7 @@ Created on Thu Apr 15 03:22:33 2021
 
 @author: alegretti
 """
-from numba import jit
+from numba import jit,prange
 from pre import idNeighbors
 
 @jit(nopython=True)
@@ -13,7 +13,7 @@ def fluxdiffPsi(flux,h_data,cv,volArr):
 
     n = len(volArr)
     
-    for i in range(n):
+    for i in prange(n):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
         
         # Flux in E volume direction
