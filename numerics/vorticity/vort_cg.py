@@ -51,7 +51,6 @@ def vort_cg(volnumb,volarr,cv,h_data,dt,re,tol=1e-6):
     delta_new = np.sum(r*r)
     delta_old = delta_new
     
-    
     while it_number < it_max and l2_norm > tol:
         
         Wk = Wo.copy()

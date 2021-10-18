@@ -7,11 +7,11 @@ Created on Fri Jul 30 13:40:53 2021
 """
 
 import numpy as np
-from numba import jit
+from numba import jit,prange
 from pre import idNeighbors
 from numerics.energy import fluxTheta
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def macCormack_theta(m_data,h_data,t_data,c,flux,wf,volArr,cv,dt,phi,Ec,Re,Pe):
     """ Solves vorticity equation using explicit MacCormack method"""
 
@@ -29,7 +29,7 @@ def macCormack_theta(m_data,h_data,t_data,c,flux,wf,volArr,cv,dt,phi,Ec,Re,Pe):
     fluxconvP = fluxTheta.fluxTheta_C(flux,h_data,t_data,wf,cv,volArr)
     fluxdiffP = fluxTheta.fluxTheta_D(flux,t_data,c,wf,cv,volArr)
     
-    for i in range(n):
+    for i in prange(n):
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
         dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]
         
@@ -45,7 +45,7 @@ def macCormack_theta(m_data,h_data,t_data,c,flux,wf,volArr,cv,dt,phi,Ec,Re,Pe):
     fluxconvC = fluxTheta.fluxTheta_C(flux,h_data,t_dataP,wf,cv,volArr)
     fluxdiffC = fluxTheta.fluxTheta_D(flux,t_dataP,c,wf,cv,volArr)
 
-    for i in range(n):
+    for i in prange(n):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
         dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]

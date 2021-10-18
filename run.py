@@ -23,7 +23,7 @@ Ls = 15.0 #input('Enter expansion domain lenght: ')
 ER = 2.0 #input('Enter expansion ratio')
 beta = 3.0 # grid streching parameter
 
-folderTag = 'fullCG'
+folderTag = 'vortCG'
 
 dtFac = 1.0
 tol = 1E-6
@@ -81,8 +81,8 @@ for beta in betaArr:
         """Enforcing BC for stream function and velocity field"""
         h_data = bc_uvPsi.bc_uvPsi(h_data,volArr,CVdata,edgeVol,S)
         """Solving Poisson equation for streamfunction"""
-        h_data = poisson_cg.poisson_cg(volNumb,volArr,CVdata,h_data)
-        # h_data = eulerExp.poissonExplicit(h_data,volArr,volNodes,CVdata)
+        # h_data = poisson_cg.poisson_cg(volNumb,volArr,CVdata,h_data)
+        h_data = eulerExp.poissonExplicit(h_data,volArr,volNodes,CVdata)
         """Calculating velocity field components"""
         h_data = uAndV.calculateUandV(h_data,volArr,CVdata)
         """Enforcing BC for vorticity""" 
@@ -107,9 +107,9 @@ for beta in betaArr:
         erroMy = np.max(np.abs(m_data[:,6] - m_dataDummy[:,6]))
     
         i+= 1
-        print(i)
+        # print(i)
         if i % 1000 == 0:
-             print('{}k_it\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}'.format(int(i/1000),erroPsi,erroW,erroMx,erroMy,erroTheta))
+            print('{}k_it\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}'.format(int(i/1000),erroPsi,erroW,erroMx,erroMy,erroTheta))
        
     Xr = calcXr.calcXr(edgeVol,volArr,h_data,CVdata,Le)
     Nu_AVG,Nu_x,thetaM_x,x_cv = calcNu.calcNu(np.max(y2),nx3,ny2,ny3,x3,Le,h_data,t_data,CVdata,volArr,Ls,volNumb)

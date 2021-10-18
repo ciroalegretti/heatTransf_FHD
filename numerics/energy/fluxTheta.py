@@ -5,15 +5,15 @@ Created on Fri Jul 30 15:37:39 2021
 
 @author: alegretti
 """
-from numba import jit
+from numba import jit,prange
 from pre import idNeighbors
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def fluxTheta_C(flux,h_data,t_data,wf,cv,volArr):
     
     k = len(flux)
     
-    for i in range(k):
+    for i in prange(k):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
         
         # Flux in E volume direction
@@ -28,12 +28,12 @@ def fluxTheta_C(flux,h_data,t_data,wf,cv,volArr):
     return flux
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def fluxTheta_D(flux,t_data,c,wf,cv,volArr):
 
     k = len(flux)
     
-    for i in range(k):
+    for i in prange(k):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
 
         # Flux in E volume direction
