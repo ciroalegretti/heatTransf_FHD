@@ -107,7 +107,7 @@ for beta in betaArr:
         erroMy = np.max(np.abs(m_data[:,6] - m_dataDummy[:,6]))
     
         i+= 1
-        # print(i)
+        print(i)
         if i % 1000 == 0:
              print('{}k_it\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}'.format(int(i/1000),erroPsi,erroW,erroMx,erroMy,erroTheta))
        
