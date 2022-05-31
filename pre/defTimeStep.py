@@ -7,12 +7,12 @@ Created on Wed Jul 28 19:32:58 2021
 """
 import numpy as np
 
-def dtMin(Re,Pr,dtFac,x1,x3,y2,y3):
+def dtMin(Re,Pr,dtFac,CVdata):
     """ Calculates minimum time step required"""
     
-    dtPsi = dtFac*np.min([x1[0,-1] - x1[0,-2],x3[0,1] - x3[0,0],y2[0,0] - y2[1,0],y3[0,0] - y3[1,0]])**2         
-    dtVort = (Re)*dtFac*np.min([x1[0,-1] - x1[0,-2],x3[0,1] - x3[0,0],y2[0,0] - y2[1,0],y3[0,0] - y3[1,0]])**2         
-    dtTheta = (Re*Pr)*dtFac*np.min([x1[0,-1] - x1[0,-2],x3[0,1] - x3[0,0],y2[0,0] - y2[1,0],y3[0,0] - y3[1,0]])**2   
+    dtPsi = dtFac*np.min([np.min(CVdata[:,4]),np.min(CVdata[:,5])])**2            
+    dtVort = (Re)*dtFac*np.min([np.min(CVdata[:,4]),np.min(CVdata[:,5])])**2            
+    dtTheta = (Re*Pr)*dtFac*np.min([np.min(CVdata[:,4]),np.min(CVdata[:,5])])**2            
     
     dt = np.min([dtVort,dtTheta,dtPsi])    
     

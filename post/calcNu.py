@@ -7,108 +7,222 @@ Created on Fri Jul 30 16:26:00 2021
 """
 import numpy as np
 
-def calcNu(H,nx3,ny2,ny3,x3,Le,data,tData,cv,volArr,Ls,volNumb):
-    import matplotlib.pyplot as plt
+def makeSlices(nx1,nx3,ny1,ny3,volArr,cv,volNumb):
     
-    print('')
-    print('Calculating heat flux at the bottom wall and output parameters!')    
+    yEnt = np.zeros((ny1-1))                        # y coord. of volumes centroids
+    ySud = np.zeros((ny1+ny3-1))                    # y coord. of volumes centroids
+    xAll = np.zeros((nx1+nx3-1))                      # x coord. of volumes centroids
     
-    x3 = np.round(x3,decimals=3)
-    cv = np.round(cv,decimals=5)
+    # Matching volumes at the bottom wall with its respective ghosts volumes
+    wallVols = np.zeros((nx1+nx3-1,2))              # wallVols = [volWall,Ghost]
     
-    x_cv = x3[0,:] + (x3[0,1] - x3[0,0])/2   # every cv centroid x-coord after the sudden expansion
-    x_cv = x_cv[:-1]                                   # number of volumes = nodes - 1
-    x_cv = np.round(x_cv,decimals=3)
+    count = 0
+    for i in range(volNumb):
+        if volArr[i,-1] < 0:
+            wallVols[count,0] = int(i)
+            wallVols[count,1] = int(volArr[i,-1])
+            count+=1
     
-    # sliceVol = np.zeros((ny2 + ny3 + 1,len(x_cv)))         # 2D representation of volumes arrangement
-    Tm = np.zeros((len(x_cv)))                           # Array of average temperatures Tm = Tm(x)
-    wallVol = np.zeros((nx3 - 1))
-    ghostWall = wallVol.copy()
-    volSlice = np.zeros((ny2 + ny3 + 1,len(x_cv)))           # "+1" instead "-1" in order to include two ghosts
- 
-    u = np.zeros((ny2 + ny3 + 1))
-    theta = u.copy()
-    uTheta = u.copy()                   # product between u and theta for integration
-    nu_x = x_cv.copy()
-    thetaWall = x_cv.copy()
-    theta1 = thetaWall.copy()           # border between first two volumes from bottom to top
+    # Assembling 2D representation of volumes arrangement in entrance region and mapping y_cv coord.
+    sliceEnt = np.zeros((ny1-1,nx1))
+    for k in range(nx1-1):
+        bw = int(wallVols[k,0])
+        j = 0
+        for i in range(volNumb):
+            if cv[i,2] == cv[bw,2]:
+                # print(i)
+                sliceEnt[j,k] = int(i)
+                yEnt[j] = cv[i,3]
+                j += 1     
+    
+    # Assembling 2D representation of volumes arrangement in expanded region            
+    sliceSud = np.zeros((ny1+ny3-1,nx3-1))
+    for k in range(nx3-1):
+        bw = int(wallVols[k+nx1,0])
+        j = 0
+        for i in range(volNumb):
+            if cv[i,2] == cv[bw,2]:
+                # print(i)
+                sliceSud[j,k] = int(i)
+                ySud[j] = cv[i,3]
+                j += 1
 
-    # Finding volumes adjacent to the bottom wall and associated ghost volumes
-    curr = volNumb - 1
-    ind = -1
-    while curr > 0:
+    k = 0
+    for i in range(volNumb):
+        if volArr[i,-1] < 0:
+            xAll[k] = cv[i,2]
+            k += 1
+        
 
-        wallVol[ind] = cv[curr,0]
-        ghostWall[ind] = volArr[curr,4]
-        left = volArr[curr,1]
-        curr = left
+    return wallVols,sliceEnt,sliceSud,yEnt,ySud,xAll            
+                
 
-        ind -= 1
+def calcNu2(nx1,nx3,ny1,ny3,volArr,cv,volNumb,edge,h_data,t_data,Le,Ls):
     
-    # Creating 2d array of volumes arrangement    
-    s = []
-    for j in range(len(x_cv)):
-        # j = 0
-        curr = int(wallVol[j])
-        for k in range(len(cv)):
-            x_cord = cv[curr,2]
-            if cv[k,2] == x_cord:
-                s.append(int(cv[k,0]))
-            
-        s.insert(0, s.pop())
-        volSlice[:,j] = s
-        s = []   
-        
-    # Setting the number of the volumes as integers in order to use them as indexes
-    volSlice = volSlice.astype(int)
+    wallVols,sliceEnt,sliceSud,yEnt,ySud,xAll = makeSlices(nx1,nx3,ny1,ny3,volArr,cv,volNumb)
     
-    # Calculating y-direction distanc ebetween CV centroids for integrations to come
-    y_cv = u.copy()
-    a = 0
-    for b in range(len(y_cv)):
-        # for a in range(len(volSlice[:,-1])):
-        aa = volSlice[a,-1]
-        volume = int(cv[aa,0])
-        y_coord = cv[volume,3]
-        y_cv[b] = y_coord            # y-coord of CV centroidS
-        a += 1
-   
-    # Calculations
-    for i in range(len(x_cv)):
-        ### Calculating Average temperature at the current section           
-        for j in range(1,len(y_cv)+1):
-            foo = volSlice[-j,i]
-            u[j-1] = data[foo,1]
-            theta[j-1] = tData[foo,1]
-            uTheta[j-1] = u[j-1]*theta[j-1]
-            # print(foo)
-              
-            # print('{:.2E}'.format(uTheta[j]))
-              
-        Tm[i] = np.trapz(uTheta,np.flip(y_cv))/H
-        # print(Tm[i])
-        
-        wv = volSlice[-2,i]    # number of the volume adjacent to the bottom wall (Index counting starting at top wall)
-        gv = volSlice[-1,i]    # number of associated ghost volume
-        wwv = volArr[wv,2]     # volume above wv (to get derivatives between them)
-        # w = int(wallVol[i])
-        
-        
-        thetaWall[i] = (tData[wv,1] + tData[gv,1])/2
-        theta1[i] = (tData[wv,1] + tData[wwv,1])/2
-        nu_x[i] = (2*(theta1[i] - thetaWall[i])/(cv[wv,3] + cv[wwv,3]))/(Tm[i] - thetaWall[i])   # theta derivative between y coord of wall volume and 0 (wall y-coord)
-        
-        # print('{}\t {}'.format(wv,gv))
-        
-    nu_avg = np.trapz(nu_x,x_cv)/Ls#((len(x_cv) - 1)*(cv[(len(volArr) - 2),2] - cv[(len(volArr) - 3),2]))
+    uThetaEnt = sliceEnt.copy()             # products between u and T
+    uThetaSud = sliceSud.copy()             # products between u and T
     
-    plt.figure(1)
-    plt.xlabel('x')
-    plt.ylabel('thetaM(x)')
-    plt.plot(x_cv,Tm)
-    plt.figure(2)
-    plt.xlabel('x')
-    plt.ylabel('Nu(x)')
-    plt.plot(x_cv,nu_x)
+    uEnt = uThetaEnt.copy()
+    for j in range(len(sliceEnt)):
+        for i in range(len(sliceEnt[0])):
+            a = int(sliceEnt[j,i])
+            uEnt[j,i] = h_data[a,1]
     
-    return nu_avg,nu_x,Tm,x_cv#,y_cv,theta1,thetaWall
+    uSud = uThetaSud.copy()
+    for j in range(len(sliceSud)):
+        for i in range(len(sliceSud[0])):
+            a = int(sliceSud[j,i])
+            uSud[j,i] = h_data[a,1]    
+    
+    for j in range(len(sliceEnt)):
+        for i in range(len(sliceEnt[0])):
+            a = int(sliceEnt[j,i])
+            uThetaEnt[j,i] = h_data[a,1]*t_data[a,1]
+    
+    for j in range(len(sliceSud)):
+        for i in range(len(sliceSud[0])):
+            a = int(sliceSud[j,i])
+            uThetaSud[j,i] = h_data[a,1]*t_data[a,1]
+    
+    Tm = np.zeros((nx1+nx3-1))
+    Nu_x = np.zeros((nx1+nx3-1))
+    
+    # Calculating Tm for entrance region
+    for i in range(edge-int(wallVols[0,0])-1):
+        U = 1.0     # average velocity
+        h = 0.5     # channel height
+        Tm[i] = (1/(U*h))*np.trapz(uThetaEnt[:,i],-yEnt)
+        
+    # Calculating Tm for expanded region
+    skip = int(nx1)#len(range(edge-int(wallVols[0,0])))
+    for i in range(nx1,nx3+nx1-1):
+        U = 0.5     # average velocity
+        h = 1.0     # channel height
+        Tm[i] = (1/(U*h))*np.trapz(uThetaSud[:,i-skip],-ySud)        
+        
+    # Calculating Nu_x
+    for i in range(len(Nu_x)):
+        vol = int(wallVols[i,0])
+        ghost = int(wallVols[i,1])
+        Nu_x[i] = - (1/(1 - Tm[i]))*(t_data[vol,1] - t_data[ghost,1])/(cv[vol,3] - cv[ghost,3])
+        
+    Nu_AVG = (1/(Le+Ls))*np.trapz(np.sqrt(Nu_x**2),xAll)
+    
+    
+    return Tm,xAll,Nu_x,Nu_AVG
+
+def makeSlices_PP(nx1,nx3,ny1,ny3,volArr,cv,volNumb):
+    
+    yEnt = np.zeros((ny1-1))                      # y coord. of volumes centroids
+    xAll = np.zeros((nx1-1))                      # x coord. of volumes centroids
+    
+    # Matching volumes at the bottom wall with its respective ghosts volumes
+    wallVols = np.zeros((nx1-1,2))              # wallVols = [volWall,Ghost]
+    
+    count = 0
+    for i in range(volNumb):
+        if volArr[i,-1] < 0:
+            wallVols[count,0] = int(i)
+            wallVols[count,1] = int(volArr[i,-1])
+            count+=1
+    
+    # Assembling 2D representation of volumes arrangement and mapping y_cv coord.
+    sliceEnt = np.zeros((ny1-1,nx1-1))
+    for k in range(nx1-1):
+        bw = int(wallVols[k,0])
+        j = 0
+        for i in range(volNumb):
+            if cv[i,2] == cv[bw,2]:
+                # print(i)
+                sliceEnt[j,k] = int(i)
+                yEnt[j] = cv[i,3]
+                j += 1     
+    
+    k = 0
+    for i in range(volNumb):
+        if volArr[i,-1] < 0:
+            xAll[k] = cv[i,2]
+            k += 1
+        
+
+    return wallVols,sliceEnt,yEnt,xAll       
+
+def calcNu2_PP(nx1,ny1,volArr,cv,volNumb,h_data,t_data,Le,h):
+    
+    wallVols,sliceEnt,yEnt,xAll = makeSlices_PP(nx1,0,ny1,0,volArr,cv,volNumb)
+    
+    uThetaEnt = sliceEnt.copy()             # products between u and T
+    
+    uEnt = uThetaEnt.copy()
+    for j in range(len(sliceEnt)):
+        for i in range(len(sliceEnt[0])):
+            a = int(sliceEnt[j,i])
+            uEnt[j,i] = h_data[a,1]
+    
+    for j in range(len(sliceEnt)):
+        for i in range(len(sliceEnt[0])):
+            a = int(sliceEnt[j,i])
+            uThetaEnt[j,i] = h_data[a,1]*t_data[a,1]
+
+    Tm = np.zeros((nx1-1))
+    Nu_x = np.zeros((nx1-1))
+
+    # Calculating Tm 
+    for i in range(len(sliceEnt[0])):
+        U = 1.0     # average velocity
+        Tm[i] = (1/(U*h))*np.trapz(uThetaEnt[:,i],-yEnt)        
+
+    # Calculating Nu_x
+    for i in range(len(Nu_x)):
+        vol = int(wallVols[i,0])
+        ghost = int(wallVols[i,1])
+        Nu_x[i] = - (t_data[vol,1] - t_data[ghost,1])/(cv[vol,3] - cv[ghost,3])
+        # print(Nu_x[i])
+
+    Nu_AVG = (1/(Le))*np.trapz(np.sqrt(Nu_x**2),xAll)
+    
+    return Tm,xAll,Nu_x,Nu_AVG,uEnt,uThetaEnt,sliceEnt
+
+def calcNu2_LDC(nx1,ny1,volArr,cv,volNumb,h_data,t_data,Le,h):
+    
+    wallVols,sliceEnt,yEnt,xAll = makeSlices_PP(nx1,0,ny1,0,volArr,cv,volNumb)
+    
+    uThetaEnt = sliceEnt.copy()             # products between u and T
+    
+    uEnt = uThetaEnt.copy()
+    for j in range(len(sliceEnt)):
+        for i in range(len(sliceEnt[0])):
+            a = int(sliceEnt[j,i])
+            uEnt[j,i] = h_data[a,1]
+    
+    for j in range(len(sliceEnt)):
+        for i in range(len(sliceEnt[0])):
+            a = int(sliceEnt[j,i])
+            uThetaEnt[j,i] = h_data[a,1]*t_data[a,1]
+    
+    Tm = np.zeros((nx1-1))
+    # q = np.zeros((nx1+nx3-1))
+    dtBulk = np.zeros((nx1-1))
+    Nu_x = np.zeros((nx1-1))
+    
+    # Calculating Tm 
+    for i in range(len(sliceEnt[0])):
+        U = 1.0     # average velocity
+        Tm[i] = (1/(U*h))*np.trapz(uThetaEnt[:,i],-yEnt)        
+        
+    # dtBulk = 1 - Tm   # If T_wall = 1
+    # dtBulk = 0 - Tm   # If T_wall = 0
+    
+    # Calculating Nu_x
+    for i in range(len(Nu_x)):
+        vol = int(wallVols[i,0])
+        ghost = int(wallVols[i,1])
+        Nu_x[i] = - (t_data[vol,1] - t_data[ghost,1])/(cv[vol,3] - cv[ghost,3])
+        # print(Nu_x[i])
+        
+    Nu_AVG = (1/(Le))*np.trapz(np.sqrt(Nu_x**2),xAll)
+    
+    
+    return Tm,xAll,Nu_x,Nu_AVG,uEnt,uThetaEnt,dtBulk,sliceEnt

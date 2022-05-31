@@ -1,11 +1,11 @@
 
-0 - Results/
-1 - Papers/
-2 - tecplot/
-X - backups/
+0 - Results_BFS/
+0 - Results_CGSMaz/
+0 - Results_LDC/
+0 - Results_PP/
 
-grids/ER=1.5/
-grids/ER=2.0/
-grids/ER=3.0/
+grids/
+nohup.out
+
 __pycache__/
 

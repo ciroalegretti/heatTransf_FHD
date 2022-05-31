@@ -12,10 +12,52 @@ from numerics.vorticity import fluxVort
 from pre import idNeighbors
 
 @jit(nopython=True, parallel=True)
-def macCormack_w(data,magData,re,flux,wf,volArr,cv,dt,pe,phi):
+def fluxHydro_C(flux,h_data,wf,cv,volArr):
+    
+    flux_c = flux.copy()
+
+    k = len(flux)
+    
+    for i in prange(k):
+        W,N,E,S = idNeighbors.idNeighbors(volArr,i)
+        
+        # Flux in E volume direction
+        flux_c[i,0] = + (wf[i,1]*h_data[i,1] + (1 - wf[i,1])*h_data[E,1])*(wf[i,1]*h_data[i,4] + (1 - wf[i,1])*h_data[E,4]) 
+        # Flux in N volume direction
+        flux_c[i,1] = + (wf[i,2]*h_data[i,2] + (1 - wf[i,2])*h_data[N,2])*(wf[i,2]*h_data[i,4] + (1 - wf[i,2])*h_data[N,4]) 
+        # Flux in W volume direction
+        flux_c[i,2] = + (wf[i,3]*h_data[i,1] + (1 - wf[i,3])*h_data[W,1])*(wf[i,3]*h_data[i,4] + (1 - wf[i,3])*h_data[W,4]) 
+        # Flux in S volume direction
+        flux_c[i,3] = + (wf[i,4]*h_data[i,2] + (1 - wf[i,4])*h_data[S,2])*(wf[i,4]*h_data[i,4] + (1 - wf[i,4])*h_data[S,4])
+        
+    return flux_c
+
+
+@jit(nopython=True, parallel=True)
+def fluxHydro_D(flux,h_data,c,wf,cv,volArr):
+
+    k = len(flux)
+    
+    for i in prange(k):
+        W,N,E,S = idNeighbors.idNeighbors(volArr,i)
+
+        # Flux in E volume direction
+        flux[i,0] = + (1./c)*(h_data[E,4] - h_data[i,4])/(cv[E,2] - cv[i,2])
+        # Flux in N volume direction
+        flux[i,1] = + (1./c)*(h_data[N,4] - h_data[i,4])/(cv[N,3] - cv[i,3])
+        # Flux in W volume direction
+        flux[i,2] = + (1./c)*(h_data[i,4] - h_data[W,4])/(cv[i,2] - cv[W,2])
+        # Flux in S volume direction
+        flux[i,3] = + (1./c)*(h_data[i,4] - h_data[S,4])/(cv[i,3] - cv[S,3])
+
+    return flux
+
+@jit(nopython=True, parallel=True)
+def macCormack_w(data,magData,re,wf,volArr,cv,dt,pe,phi):
     """ Solves vorticity equation using explicit MacCormack method"""
 
     n = len(volArr)
+    flux = np.zeros((n,4))
 
     dataP = data.copy()
     dataC = data.copy()
@@ -26,8 +68,8 @@ def macCormack_w(data,magData,re,flux,wf,volArr,cv,dt,pe,phi):
     
     # Predictor step (forward approximation for advection fluxes)
     
-    fluxconvP = fluxVort.fluxHydro_C(flux,data,wf,cv,volArr)
-    fluxdiffP = fluxVort.fluxHydro_D(flux,data,re,wf,cv,volArr)
+    fluxconvP = fluxHydro_C(flux,data,wf,cv,volArr)
+    fluxdiffP = fluxHydro_D(flux,data,re,wf,cv,volArr)
     
     for i in prange(n):
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
@@ -42,8 +84,8 @@ def macCormack_w(data,magData,re,flux,wf,volArr,cv,dt,pe,phi):
 
     # Corrector step (backward approximation for advection fluxes)
 
-    fluxconvC = fluxVort.fluxHydro_C(fluxconvP,dataP,wf,cv,volArr)
-    fluxdiffC = fluxVort.fluxHydro_D(fluxdiffP,dataP,re,wf,cv,volArr)
+    fluxconvC = fluxHydro_C(fluxconvP,dataP,wf,cv,volArr)
+    fluxdiffC = fluxHydro_D(fluxdiffP,dataP,re,wf,cv,volArr)
 
     for i in prange(n):
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]

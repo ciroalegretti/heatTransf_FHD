@@ -1,0 +1,56 @@
+
+
+	TAREFAS RADU - Cavidade cisalhante (LDC)___________runLDC.py________
+
+ - Simulações de validações para volumes: volsArr = [400,1600,3600,6400,10000]
+					    ReArr = [400.,1000.,2000.,3200.,5000.]
+
+	TOTAL = 25 simulações
+
+ - Para essas simulações, gerar a partir dos resultados:
+	
+	Plot de contorno para função corrente (1 para cada Re, convergido)
+		---> Usar layout específico com contornos pré-definidos para 				a função corrente
+
+	Usar artigo (Gupta, 2005) para validar os valores de psiMax 			(corners) e psiMin (vórtice primário central)	
+
+	Plotar grafico de valor da psiMin vs volume
+		 (5 curvas no mesmo gráfico, uma para cada Re), destacando 
+		 o resultado de Gupta com uma linha tracejada
+
+	Plotar grafico de valor da psiMax nos dois cantos vs volume
+		 (5 curvas em cada um dos 2 gráficos, uma para cada Re), 			 destacando o resultado de Gupta com uma linha tracejada
+	
+	Extrair no tecplot por meio de macros perfis horizontais no canto 
+		inferior do domínio no interior dos vórtices secundários 			(definir tamanho da região para Re = 5000 -> maiores 			vórtices) 
+
+	Escrever um programa em fortran que leia os dados extraídos, 			armazene os valores em vetores e extraia os valores 			máximos de Psi e suas respectivas posições
+
+	Comparar com o artigo Gupta as posições dos vórtices
+		 (tabela 1 ---> psiMin p/ diferentes Re) 
+                 (tabela 2 ---> psiMax p/ diferentes Re) 		
+		
+	Pesquisar na literatura dados para validação térmica da cavidade
+		cisalhante (de preferência em convecção forçada pura, ou em 			convecção mista em alto Re)
+
+	Entrega: 21/02/22
+
+########################################################################
+
+	TAREFAS GABRIEL - Esc entre placas paralelas (PP)______runPP.py_____
+
+ - Gz^-1 = L/(D*Re*Pr) ----> Problm Graetz: escoamento plenamente 			desenvolvido mas em desenvolvimento térmico
+
+ - Já captamos efeitos magnéticos em problemas acoplados em desenvolvimento, 			mas só para coeficientes locais (Tm(x) e Nu(x))
+
+ - Rodar simuilações para o problema acoplado para alpha = [1,10,100]
+		para campo infeior centrado na metade do canal, variando
+		largura do ímã (b) = [h/2, h, (3/2)*h] e afastamento entre o 			ímã e o domínio (y0)
+
+ - Plotar campos de cores para velocidade, temperatura e magnetização
+
+ - Extrair perfis (u,T,M) antes do ímã, sobre o centro do ímã e após o ímã 			(definir posições)
+
+ - Plotar Nu(x) vs x para os diferentes alpha no mesmo gráfico
+	
+ 	Entrega: 21/02/22
