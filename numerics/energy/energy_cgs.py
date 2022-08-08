@@ -10,7 +10,7 @@ import numpy as np
 from pre import idNeighbors
 
 @jit(nopython=True, parallel=True)
-def energy_cgs(volnumb,volarr,cv,wf,h_data,t_data,m_data,phi,ec,re,pe,pr,dt,tol=1e-9):
+def energy_cgs(volnumb,volarr,cv,wf,h_data,t_data,m_data,phi,ec,re,pe,pr,dt,tol=1e-3):
     
     # h_data = bc_uvPsi.bc_uvPsi(h_data,volarr,cv,edge,S)
     To = t_data[:,1].copy()

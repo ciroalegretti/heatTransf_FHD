@@ -123,7 +123,7 @@ from numerics.poisson import bc_uvPsi
     
 #     return data,magData,thermoData,flux
 
-def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta):
+def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta,U):
 # =============================================================================
 #     
 #     Return 2D array data:
@@ -161,7 +161,7 @@ def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta):
     magData,thermoData = equilibriumMag.equilibriumMag(magData,thermoData,phi,alpha0,beta,volNumb)
 
     # Applying hydrodynamic and thermal BC
-    data = bc_uvPsi.bc_uvPsi_LDC(data,volArr,CVdata,h)
+    data = bc_uvPsi.bc_uvPsi_LDC(data,volArr,CVdata,h,U)
     thermoData = bc_theta.bc_theta_LDC(thermoData,volArr,CVdata)
     
     return data,magData,thermoData,H0

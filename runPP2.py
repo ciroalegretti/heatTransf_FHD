@@ -17,7 +17,6 @@ from numerics.energy import bc_theta,macCormack_theta,energy_cgs
 from numerics.poisson import bc_uvPsi,uAndV,poisson_cg,eulerExp
 from post import calcNu,dataOut,profilesOut
 import numpy as np
-import os
 
 # =============================================================================
 h = 0.5                 # Channel height (so Dh = 1)
@@ -33,7 +32,7 @@ beta_dt = 0.1           # beta_dt = delta T/T_C
 # =============================================================================
 #               DEFINE VARIABLE PARAMETERS AND MAGNET GEOMETRY 
 # =============================================================================
-phiArr = [0.01] #np.linspace(0.01,0.25,20)
+phiArr = [0.15] #np.linspace(0.01,0.25,20)
 #phiArr = np.insert(phiArr,0,1E-5)
 PeArr = [1E-2]#[0.01, 0.1, 1.0]#np.linspace(0.01,10,4)
 # PrArray = np.logspace(-1,1,5)
@@ -47,7 +46,7 @@ invGzArr = [.1]#np.logspace(1,-5,7)#[0.01]#,1E-5]#             # Inverse of Grae
 
 lambArr = np.linspace(0,15,20)               # Lambda parameter for chain formation (Ivanov - M0)
 
-outTag = 'testeDataOut'
+outTag = 'Varredura_lambda_phi_0.15'
 
 dist = 0                # Vertical distance between the magnet and the bottom wall
 ratio = 0.25               # (channel lenght)/(magnet face lenght)
@@ -157,7 +156,5 @@ for invGz in invGzArr:
                             for xpos in profilesLoc:
                                 profile = profilesOut.profilesOut(xpos,arr2d,CVdata,h_data,t_data,m_data,volArr,volNumb)
         
-                            dataOut.exportDataPP(CVdata,h_data,m_data,t_data,volNumb,nodeNumb,\
+                            dataOut.exportData(CVdata,h_data,m_data,t_data,volNumb,nodeNumb,\
                                                     volNodes,nodesCoord,modH,xAll,Tm,Nu_x,Nu_AVG)
-
-                            os.chdir('../../../') 

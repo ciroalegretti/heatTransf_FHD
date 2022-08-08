@@ -112,13 +112,13 @@ def bc_uvPsi_PP(data,volArr,controlVol,h):
     return data
 
 @jit(nopython=True)
-def bc_uvPsi_LDC(data,volArr,controlVol,h):    
+def bc_uvPsi_LDC(data,volArr,controlVol,h,U):    
 
     """Lid"""
     for i in range(len(volArr)):
         N = volArr[i,2] 
         if N < 0:    
-            data[N,1] = 2.0 - data[i,1]
+            data[N,1] = + U*2.0 - data[i,1]
             data[N,2] = - data[i,2]
             data[N,3] = - data[i,3]
 
