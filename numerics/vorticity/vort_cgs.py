@@ -10,7 +10,7 @@ import numpy as np
 from pre import idNeighbors
 
 @jit(nopython=True, parallel=True)
-def vort_cgs(volnumb,wf,volarr,cv,h_data,m_data,dt,re,pe,phi,tol=1e-6):
+def vort_cgs(volnumb,wf,volarr,cv,h_data,m_data,dt,re,pe,phi,tol=1e-3):
     
     Wo = h_data[:,4].copy()
     b = np.zeros((len(cv)))
@@ -45,7 +45,7 @@ def vort_cgs(volnumb,wf,volarr,cv,h_data,m_data,dt,re,pe,phi,tol=1e-6):
                                                 # flux of kelvin forces bottom frontier              
                                                   - (wf[i,4]*m_data[i,5] + (1 - wf[i,4])*m_data[N,5])*(m_data[E,4] + m_data[SE,4] - m_data[W,4] - m_data[SW,4])/(4*dxV) \
                                                   + (wf[i,4]*m_data[i,6] + (1 - wf[i,4])*m_data[E,6])*(m_data[i,4] - m_data[S,4])/(cv[i,3] - cv[S,3]))/dyV \
-                                                            
+
                                                 # Fluxes of -div(MxH)
                                                 - ((m_data[E,5]*m_data[E,4] - m_data[i,5]*m_data[i,4])/(cv[E,2] - cv[i,2]) -  \
                                                    (m_data[i,5]*m_data[i,4] - m_data[W,5]*m_data[W,4])/(cv[i,2] - cv[W,2]))/dxV/2 \

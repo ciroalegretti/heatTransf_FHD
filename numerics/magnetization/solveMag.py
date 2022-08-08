@@ -32,7 +32,18 @@ def ftcsMx(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
                                       - data[i,4]*magDataP[i,6]/2. + (magDataP[i,3]*magDataP[i,6]**2 - (magDataP[i,5]*magDataP[i,6]*magDataP[i,4]))*3*magData[i,-1]/(4*pe) \
                                       + (magDataP[i,1] - magDataP[i,5])/pe
                                           )
-                                      
+    # Smoothing ghost volumes
+    for i in range(len(volArr)):
+        W,N,E,S = idNeighbors.idNeighbors(volArr,i)
+        if W < 0:
+            magData[W,5] = (5*magData[i,5] - magData[E,5])/4
+        if E < 0:
+            magData[E,5] = (5*magData[i,5] - magData[W,5])/4
+        if N < 0:
+            magData[N,5] = (5*magData[i,5] - magData[S,5])/4
+        if S < 0:
+            magData[S,5] = (5*magData[i,5] - magData[N,5])/4
+        
     return magData
 
 @jit(nopython=True)
@@ -59,5 +70,17 @@ def ftcsMy(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
                                       + data[i,4]*magDataP[i,5]/2. + (magDataP[i,4]*(magDataP[i,5]**2) - magDataP[i,5]*magDataP[i,6]*magDataP[i,4] )*3*magData[i,-1]/(4*pe)   \
                                       + (magDataP[i,2] - magDataP[i,6])/pe
                                           )
+    
+    # Smoothing ghost volumes
+    for i in range(len(volArr)):
+        W,N,E,S = idNeighbors.idNeighbors(volArr,i)
+        if W < 0:
+            magData[W,6] = (5*magData[i,6] - magData[E,6])/4
+        if E < 0:
+            magData[E,6] = (5*magData[i,6] - magData[W,6])/4
+        if N < 0:
+            magData[N,6] = (5*magData[i,6] - magData[S,6])/4
+        if S < 0:
+            magData[S,6] = (5*magData[i,6] - magData[N,6])/4
                                       
     return magData

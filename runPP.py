@@ -17,6 +17,7 @@ from numerics.energy import bc_theta,macCormack_theta,energy_cgs
 from numerics.poisson import bc_uvPsi,uAndV,poisson_cg,eulerExp
 from post import calcNu,dataOut,profilesOut
 import numpy as np
+import os
 
 # =============================================================================
 h = 0.5                 # Channel height (so Dh = 1)
@@ -32,11 +33,11 @@ beta_dt = 0.1           # beta_dt = delta T/T_C
 # =============================================================================
 #               DEFINE VARIABLE PARAMETERS AND MAGNET GEOMETRY 
 # =============================================================================
-phiArr = [0.02]#np.linspace(0.01,0.25,20)
-# phiArr = np.insert(phiArr,0,1E-5)
+phiArr = [0.01] #np.linspace(0.01,0.25,20)
+#phiArr = np.insert(phiArr,0,1E-5)
 PeArr = [1E-2]#[0.01, 0.1, 1.0]#np.linspace(0.01,10,4)
 # PrArray = np.logspace(-1,1,5)
-alphaArr = [1] #np.linspace(0.1, 10.0, 20)
+alphaArr = [1.0] #np.linspace(0.1, 10.0, 20)
 #alphaArr = np.insert(alphaArr,0,1E-5)
 # alphaArr = np.insert(alphaArr,0,1E-5)
 # alphaArr = alphaArr[15:]
@@ -44,9 +45,9 @@ alphaArr = [1] #np.linspace(0.1, 10.0, 20)
 invGzArr = [.1]#np.logspace(1,-5,7)#[0.01]#,1E-5]#             # Inverse of Graetz number [1.0, 0.1, 0.01]
 # tolArr = [1E-6]#np.logspace(-4,-10,7)
 
-lambArr = np.linspace(1,3,3)               # Lambda parameter for chain formation (Ivanov - M0)
+lambArr = np.linspace(0,15,20)               # Lambda parameter for chain formation (Ivanov - M0)
 
-outTag = 'lambdaCheck'
+outTag = 'testeDataOut'
 
 dist = 0                # Vertical distance between the magnet and the bottom wall
 ratio = 0.25               # (channel lenght)/(magnet face lenght)
@@ -156,5 +157,7 @@ for invGz in invGzArr:
                             for xpos in profilesLoc:
                                 profile = profilesOut.profilesOut(xpos,arr2d,CVdata,h_data,t_data,m_data,volArr,volNumb)
         
-                            dataOut.exportData(CVdata,h_data,m_data,t_data,volNumb,nodeNumb,\
+                            dataOut.exportDataPP(CVdata,h_data,m_data,t_data,volNumb,nodeNumb,\
                                                     volNodes,nodesCoord,modH,xAll,Tm,Nu_x,Nu_AVG)
+
+                            os.chdir('../../../') 

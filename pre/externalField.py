@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+ #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug  5 01:47:56 2021
@@ -198,6 +198,8 @@ def externalField(field_sty,eh,magData,volNumb,cv,x0,y0,b,Lm):
     # Dimensionless fields                    
     magData[:,3] = magData[:,3]/H0max
     magData[:,4] = magData[:,4]/H0max
+    
+    H0 = H0/H0max
                                      
     return magData[:,3],magData[:,4],H0
 

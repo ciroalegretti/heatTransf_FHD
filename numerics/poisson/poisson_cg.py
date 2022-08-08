@@ -10,7 +10,7 @@ import numpy as np
 from pre import idNeighbors
 
 @jit(nopython=True, parallel=True)
-def poisson_cgs(volnumb,volarr,cv,h_data,dt,tol=1e-6):
+def poisson_cgs(volnumb,volarr,cv,h_data,dt,tol=1e-3):
 
     """Pseudo-transient poisson equation"""
 
