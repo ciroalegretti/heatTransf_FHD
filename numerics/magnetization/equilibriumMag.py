@@ -20,7 +20,8 @@ def equilibriumMag(mData,tData,phi,alpha0,beta,volNumb):
     for i in range(volNumb):
         
         """ Calculating modified alpha_langevin """
-        tData[i,-1] = alpha0/(beta*tData[i,1] + 1.)
+        # tData[i,-1] = alpha0/(beta*tData[i,1] + 1.)
+        tData[i,-1] = alpha0*(np.sqrt(mData[i,3]**2 + mData[i,4]**2))/(beta*tData[i,1] + 1.)
         
         """ Calculating equilibrium magnetization"""
         M0 = phi*Md*(1.0/(np.tanh(tData[i,-1])) - 1.0/(tData[i,-1]))

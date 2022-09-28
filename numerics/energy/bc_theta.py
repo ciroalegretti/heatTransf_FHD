@@ -103,8 +103,8 @@ def bc_theta_LDC(tData,volArr,controlVol):
     for i in range(len(volArr)):
         W = volArr[i,1]
         if W < 0:
-            # tData[W,1] = - tData[i,1] # enforcing theta = 0.0
-            # tData[W,1] = - controlVol[i,3]/h + 1 + STEP/h    # Linear temperature velocity profile ranging from 0 (top wall) to 1 (bottom wall)
+            # tData[W,1] = 2. - tData[i,1] # enforcing theta = 1.0
+
             tData[W,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
             
     """Top Lid"""
@@ -120,7 +120,8 @@ def bc_theta_LDC(tData,volArr,controlVol):
     for i in range(len(volArr)):
         E = volArr[i,3]
         if E < 0:
-#             tData[E,1] = - tData[i,1] # enforcing theta = 0.0
+            # tData[E,1] = - tData[i,1] # enforcing theta = 0.0
+
             tData[E,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
             
     """ Bottom wall"""
@@ -131,5 +132,44 @@ def bc_theta_LDC(tData,volArr,controlVol):
             tData[S,1] = - tData[i,1] # enforcing theta = 0.0
 
             # tData[S,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
+            
+    return tData
+
+@jit(nopython=True)
+def bc_theta_tmConv(tData,volArr,controlVol):    
+    
+    """Left Wall"""
+    for i in range(len(volArr)):
+        W = volArr[i,1]
+        if W < 0:
+            tData[W,1] = 2. - tData[i,1] # enforcing theta = 1.0
+
+            # tData[W,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
+            
+    """Top Lid"""
+    for i in range(len(volArr)):
+        N = volArr[i,2] 
+        if N < 0:    
+            # tData[N,1] = - tData[i,1] # enforcing theta = 0.0
+            # tData[N,1] = 2. - tData[i,1] # enforcing theta = 1.0
+
+            tData[N,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
+            
+    """Right wall"""
+    for i in range(len(volArr)):
+        E = volArr[i,3]
+        if E < 0:
+            tData[E,1] = - tData[i,1] # enforcing theta = 0.0
+
+            # tData[E,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
+            
+    """ Bottom wall"""
+    for i in range(len(volArr)):
+        S = volArr[i,4] 
+        if S < 0:    
+            # tData[S,1] = 2. - tData[i,1] # enforcing theta = 1.0
+            # tData[S,1] = - tData[i,1] # enforcing theta = 0.0
+
+            tData[S,1] = tData[i,1] # enforcing dTheta/dn = 0 adiabatic
             
     return tData

@@ -10,7 +10,7 @@ from pre import idNeighbors
 
 @jit(nopython=True)
 # """________________________x-component Magnetic Equation________________________"""
-def ftcsMx(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
+def ftcsMx(data,magData,tData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
     
     magDataP = magData.copy()
     
@@ -29,7 +29,7 @@ def ftcsMx(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
         magData[i,5] = magDataP[i,5] + dt*( \
                                       - (Upos*MxBaX + Uneg*MxFoX)/2 \
                                       - (Vpos*MxBaY + Vneg*MxFoY)/2 \
-                                      - data[i,4]*magDataP[i,6]/2. + (magDataP[i,3]*magDataP[i,6]**2 - (magDataP[i,5]*magDataP[i,6]*magDataP[i,4]))*3*magData[i,-1]/(4*pe) \
+                                      - data[i,4]*magDataP[i,6]/2. + (magDataP[i,3]*magDataP[i,6]**2 - (magDataP[i,5]*magDataP[i,6]*magDataP[i,4]))*3*tData[i,-1]/(4*pe) \
                                       + (magDataP[i,1] - magDataP[i,5])/pe
                                           )
     # Smoothing ghost volumes
@@ -48,7 +48,7 @@ def ftcsMx(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
 
 @jit(nopython=True)
 # """________________________y-component Magnetic Equation________________________"""
-def ftcsMy(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
+def ftcsMy(data,magData,tData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
     
     magDataP = magData.copy()
     
@@ -67,7 +67,7 @@ def ftcsMy(data,magData,volArr,cv,volNodes,nodesCoord,dt,phi,pe):
         magData[i,6] = magDataP[i,6] + dt*( \
                                       - (Upos*MyBaX + Uneg*MyFoX)/2 \
                                       - (Vpos*MyBaY + Vneg*MyFoY)/2 \
-                                      + data[i,4]*magDataP[i,5]/2. + (magDataP[i,4]*(magDataP[i,5]**2) - magDataP[i,5]*magDataP[i,6]*magDataP[i,4] )*3*magData[i,-1]/(4*pe)   \
+                                      + data[i,4]*magDataP[i,5]/2. + (magDataP[i,4]*(magDataP[i,5]**2) - magDataP[i,5]*magDataP[i,6]*magDataP[i,4] )*3*tData[i,-1]/(4*pe)   \
                                       + (magDataP[i,2] - magDataP[i,6])/pe
                                           )
     

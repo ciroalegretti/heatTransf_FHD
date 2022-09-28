@@ -6,6 +6,7 @@ Created on Fri Jul 30 16:26:00 2021
 @author: alegretti
 """
 import numpy as np
+from numba import jit
 
 def makeSlices(nx1,nx3,ny1,ny3,volArr,cv,volNumb):
     
@@ -185,20 +186,29 @@ def calcNu2_PP(nx1,ny1,volArr,cv,volNumb,h_data,t_data,Le,h):
     
     return Tm,xAll,Nu_x,Nu_AVG,uEnt,uThetaEnt,sliceEnt
 
-def calcNu2_LDC(nx1,ny1,volArr,cv,volNumb,h_data,t_data,Le,h):
+@jit(nopython=True)
+def calcNu2_LDC(nxy,volArr,cv,volNumb,h_data,t_data,Le,h,face_index,intDir,normalDir):
+    """
+    face_index = [1] east; [2] north; [3] west; [4] south
+    intDir = itegration direction [4] x-dir/ [5] y-dir
+    normalDir = normal direction [2] x-dir/ [3] y-dir
+    """
     
-    wallVols,sliceEnt,yEnt,xAll = makeSlices_PP(nx1,0,ny1,0,volArr,cv,volNumb)
+    wallVols = np.zeros((nxy-1,2))              # wallVols = [volWall,Ghost]
+    
+    count = 0
+    
+    for i in range(volNumb):
+        if volArr[i,face_index] < 0: # Boundary
+            wallVols[count,0] = int(i)
+            wallVols[count,1] = int(volArr[i,face_index])
+            count+=1
     
     Nu_AVG = 0.0
-    # Calculating Nu_x
-    for i in range(len(xAll)):
+    for i in range(nxy-1):
         vol = int(wallVols[i,0])
         ghost = int(wallVols[i,1])
-        # Nu_x[i] = - (t_data[vol,1] - t_data[ghost,1])/(cv[vol,3] - cv[ghost,3])
-        # print(Nu_x[i])
         
-        Nu_AVG += np.abs(((t_data[vol,1] - t_data[ghost,1])/(cv[vol,3] - cv[ghost,3]))*cv[i,4])
-        # Nu_AVG = (1/(Le))*np.trapz(np.sqrt(Nu_x**2),xAll)
-    
+        Nu_AVG += np.abs(((t_data[vol,1] - t_data[ghost,1])/(cv[vol,normalDir] - cv[ghost,normalDir]))*cv[i,intDir])
     
     return Nu_AVG

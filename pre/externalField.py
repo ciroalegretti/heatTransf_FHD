@@ -44,13 +44,14 @@ def getCoordLDC(eh,L):
     if orient == 'horiz':   # Horizontal
         x0 = 0
         y0 = L/2
-        b = L/6
+        b = L
         Lm = L
+
     
     elif orient == 'vert': # Vertical
         x0 = L/2	 
         y0 = 0
-        b = L/6
+        b = L
         Lm = L
         
     return x0,y0,b,Lm

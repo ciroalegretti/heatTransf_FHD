@@ -12,117 +12,6 @@ from numerics.magnetization import equilibriumMag
 from numerics.energy import bc_theta
 from numerics.poisson import bc_uvPsi
 
-# def startArrays(model,fieldType,volArr,CVdata,alpha0,eh,L,Le,S,h):
-# # =============================================================================
-# #     
-# #     Return 2D array data:
-# #         
-# #        data    = [#vol, u, v, psi, w]
-# #        magData = [#vol, M0x, M0y, Hx, Hy, Mx, My]
-# #        thermoData = [#vol, theta, chi, alphaLang]
-# #        
-# # =============================================================================
-
-#     n = len(volArr) # internal volumes
-#     lastGhost = np.min(volArr) 
-#     gi = np.abs(lastGhost) # last ghost abs index
-#     nt = n + gi    # total internal and ghost volumes
-    
-#     data = np.zeros((nt,5))
-#     magData = np.zeros((nt,7))
-#     thermoData = np.zeros((nt,4))
-    
-#     for i in range(n):
-#         data[i,0] = CVdata[i,0]
-#         magData[i,0] = CVdata[i,0]
-#         thermoData[i,0] = CVdata[i,0]
-#         thermoData[i,-1] = alpha0
-        
-#         data[i,3] = 0.1
-        
-#     ### Initialize magnetic         
-#     magData[:,3],magData[:,4],H0 = externalField.externalField(model,fieldType\
-#                                                 ,eh,magData,n,CVdata,L,Le,S)
-    
-#     return data,magData,thermoData,H0
-
-# def starters1d(volArr,CVdata,Hx,Hy,alpha0,S,Le,Ls):
-# # =============================================================================
-# #     
-# #     Return 2D array data:
-# #         
-# #        data    = [#vol, u, v, psi, w]
-# #        magData = [#vol, M0x, M0y, Hx, Hy, Mx, My]
-# #        thermoData = [#vol, theta, chi, alphaLang]
-# #        
-# # =============================================================================
-    
-#     n = len(volArr) # internal volumes
-#     lastGhost = np.min(volArr) 
-#     gi = np.abs(lastGhost) # last ghost abs index
-#     nt = n + gi    # total internal and ghost volumes
-    
-#     data = np.zeros((nt,5))
-#     magData = np.zeros((nt,7))
-#     thermoData = np.zeros((nt,4))
-    
-#     # fluxes arrays
-#     flux = np.zeros((n,4))
-    
-#     for i in range(n):
-#         data[i,0] = CVdata[i,0]
-#         magData[i,0] = CVdata[i,0]
-#         thermoData[i,0] = CVdata[i,0]
-#         thermoData[i,-1] = alpha0
-        
-#     ### Clegg permanent magnetic applied field
-#     magData[:,3],magData[:,4] = clegg.cleggStepFace(magData,n,CVdata,S,Le)
-#     # magData[:,3],magData[:,4] = clegg.cleggStepBW(magData,n,CVdata,S,Le,Ls)
-    
-#     ### Uniform applied field
-#     # magData[:,3] = Hx
-#     # magData[:,4] = Hy
-    
-#     return data,magData,thermoData,flux
-
-# def starters1d_PP(volArr,CVdata,Hx,Hy,alpha0,h,Le):
-#     """ Return 2D array data:
-        
-#        data    = [#vol, u, v, psi, w]
-#        magData = [#vol, M0x, M0y, Hx, Hy, Mx, My]
-#        thermoData = [#vol, theta, chi, alphaLang]
-       
-#        flux = [E,N,W,S]   -> fluxes through each face
-        
-#     """
-#     n = len(volArr) # internal volumes
-#     lastGhost = np.min(volArr) 
-#     gi = np.abs(lastGhost) # last ghost abs index
-#     nt = n + gi    # total internal and ghost volumes
-    
-#     data = np.zeros((nt,5))
-#     magData = np.zeros((nt,7))
-#     thermoData = np.zeros((nt,4))
-
-    
-#     # fluxes arrays
-#     flux = np.zeros((n,4))
-    
-#     for i in range(n):
-#         data[i,0] = CVdata[i,0]
-#         magData[i,0] = CVdata[i,0]
-#         thermoData[i,0] = CVdata[i,0]
-#         thermoData[i,-1] = alpha0
-        
-#     ### Uniform applied field
-#     # magData[:,3] = Hx
-#     # magData[:,4] = Hy
-    
-#     ### Clegg permanent magnetic applied field
-#     magData[:,3],magData[:,4] = clegg.cleggPP(magData,n,CVdata,h,Le)
-    
-#     return data,magData,thermoData,flux
-
 def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta,U):
 # =============================================================================
 #     
@@ -130,7 +19,7 @@ def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta,U)
 #         
 #        data    = [#vol, u, v, psi, w]
 #        magData = [#vol, M0x, M0y, Hx, Hy, Mx, My]
-#        thermoData = [#vol, theta, chi, alphaLang]
+#        thermoData = [#vol, theta, lambda, alphaLang, chi]
 #        
 # =============================================================================
 
@@ -141,13 +30,13 @@ def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta,U)
     
     data = np.zeros((nt,5))
     magData = np.zeros((nt,7))
-    thermoData = np.zeros((nt,4))
-    
+    thermoData = np.zeros((nt,5))
+
     for i in range(volNumb):
         data[i,0] = CVdata[i,0]
         magData[i,0] = CVdata[i,0]
         thermoData[i,0] = CVdata[i,0]
-        thermoData[i,-1] = alpha0
+        thermoData[i,-2] = alpha0
         
         data[i,3] = 0.1
         
