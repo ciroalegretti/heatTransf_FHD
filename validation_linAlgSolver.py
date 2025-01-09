@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Numerical validation of the iterative solution of sparse linear eq. systems
+
+Conjugate gradient squared algorithm applied to 2D iterative solutions. 
+
+Equation model: 2D Poisson Equation
+
+Refer to the algorithm, and examples 3.1 and 3.2 given in [1].
+
+
+Ref.: [1] Mazumder, Sandip. Numerical methods for partial differential 
+          equations: finite difference and finite volume methods. 
+          Academic Press, 2015.
+
 Created on Thu Jan 20 15:10:58 2022
 
 @author: alegretti
@@ -11,14 +24,19 @@ import numpy as np
 from numba import jit,prange
 import time           
 
+# =============================================================================
+#                       INPUTS     
+# =============================================================================
+"""__________Selected volNumb: 400,1600,6400,25600__________"""
+tol = 1E-6
+MAZ = 2                 # [1,2] for examples 3.1 and 3.2 
+
+volsArr = [400,1600,6400,25600] # [400,1600,6400,25600]
+
 # @jit(nopython=True)#, parallel=True)
 def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
-    
-# =============================================================================
-#     
-# =============================================================================
         
-    """Passo 1 - Inicializar vetores"""
+    """Step 1 - Vector initializaton"""
     phi = np.zeros((len(cv)))#h_data[:,1].copy()
     Q = np.zeros((len(cv)))
     r0 = np.zeros((len(cv)))
@@ -31,13 +49,12 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
     myfile = open('./0 - Results_CGSMaz/Ex{}_R2_{}vols_tol{:.1E}.dat'.format(MAZ,volnumb,tol),'w')
     myfile.write('Variables="it","R2"\n')
     
-    """Aplicando CC"""
-    # phi = bc_phiMaz(phi,volArr,cv)
+    # """Apply BC"""
     for i in prange(volnumb):
         W,N,E,S = idNeighbors.idNeighbors(volArr,i)
         
         if MAZ == 1:
-            """Maz 3.1"""
+            # """Maz 3.1"""
             #"""Left wall"""
             if W < 0:
                 phi[W] = 1000*(((CVdata[W,2] - 1/2)**2)*np.sinh((CVdata[W,2] - 1/2)) + ((CVdata[W,3] - 1/2)**2)*np.sinh((CVdata[W,3] - 1/2)))
@@ -55,7 +72,7 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
                 phi[N] = 1000*(((CVdata[N,2] - 1/2)**2)*np.sinh((CVdata[N,2] - 1/2)) + ((CVdata[N,3] - 1/2)**2)*np.sinh((CVdata[N,3] - 1/2)))
             
         elif MAZ == 2:
-            """Maz 3.2"""
+            # """Maz 3.2"""
             #"""Left wall"""
             if W < 0:
                 phi[W] = ((CVdata[W,2] - 1/2)**2)*np.sinh(10*(CVdata[W,2] - 1/2)) + ((CVdata[W,3] - 1/2)**2)*np.sinh(10*(CVdata[W,3] - 1/2)) + np.exp(2*CVdata[W,2]*CVdata[W,3])
@@ -72,7 +89,7 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
             if N < 0:    
                 phi[N] = ((CVdata[N,2] - 1/2)**2)*np.sinh(10*(CVdata[N,2] - 1/2)) + ((CVdata[N,3] - 1/2)**2)*np.sinh(10*(CVdata[N,3] - 1/2)) + np.exp(2*CVdata[N,2]*CVdata[N,3])
             
-    """Termo independente do S.L."""
+    """Linear source-term"""
     for i in prange(volnumb):
         if MAZ == 1:
             """Maz 3.1"""
@@ -88,7 +105,7 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
     it_number = 0
     it_max = volnumb
 
-    """Passo 2 - Inicializar resíduo"""
+    """Step 2 - residual initialization"""
     for i in prange(volnumb):
         dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
         dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]
@@ -101,7 +118,7 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
                     - ( + 1/(dyV*(cv[N,3] - cv[i,3])))*phi[N]  \
                     - ( + 1/(dyV*(cv[i,3] - cv[S,3])))*phi[S]                         
 
-    """Passo 3 - Inicializar vetores direção e direção conjugada"""
+    """Step 3 - direction and alternate direction vectors initialization"""
     d = r0
     dC = r0
     rk = r0
@@ -112,7 +129,7 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
         rOld = rk.copy()
         dOld = d.copy()     
 
-        """Passo 4 - atualizar o avanço alpha^{n+1}"""
+        """Step 4 - update alpha^{n+1}"""
         for i in prange(volnumb):
             dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
             dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]
@@ -127,12 +144,12 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
     
         alphak = np.sum(r0*rOld)/np.sum(r0*v)
     
-        """Passo 5 - atualizar o operador Gk"""
+        """Step 5 - update Gk operator"""
         Gk = dC - alphak*v
     
         for i in prange(volnumb):
-            dxV = cv[i,4]#nodesCoord[trn,1] - nodesCoord[tln,1]
-            dyV = cv[i,5]#nodesCoord[trn,2] - nodesCoord[brn,2]
+            dxV = cv[i,4]
+            dyV = cv[i,5]
             W,N,E,S = idNeighbors.idNeighbors(volarr,i)
             
             A_dC[i] =       ( - (1/(dxV))*(1/(cv[E,2] - cv[i,2]) + 1/(cv[i,2] - cv[W,2]))     \
@@ -149,21 +166,21 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
                          + ( + 1/(dyV*(cv[N,3] - cv[i,3])))*Gk[N]  \
                          + ( + 1/(dyV*(cv[i,3] - cv[S,3])))*Gk[S] 
                          
-        """Passo 6 - atualizar estimativa de phi"""
+        """Step 6 - update phi"""
         phi += alphak*(dC + Gk)    
     
-        """Passo 7 - Atualizar o resíduo e R2"""
+        """Step 7 - update residuals and R2"""
         rk = rOld - alphak*(A_dC + A_G)  # Sonnenveld
         
         R2 = np.sqrt(np.sum(rk*rk))
         
-        """Passo 8 - Calcular coef. de combinação"""
+        """Step 8 - combination parameter calculation"""
         beta = np.sum(r0*rk)/np.sum(r0*rOld)    
         
-        """Passo 9 - Atualizar vetor direção conjugada"""
+        """Step 9 - conjugate direction calculation"""
         dC = rk + beta*Gk        
         
-        """Passo 10 - Atualizar vetor direção de busca"""
+        """Step 10 - update search direction vector"""
         d = dC + beta*(Gk + beta*dOld)   
         
         print(it_number,R2)
@@ -176,12 +193,9 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
     
     return phi,it_number,Q
 
-"""                   Selected volNumb: 400,1600,3600,6400,10000                           """
-tol = 1E-6
-MAZ = 2
 
-volsArr = [400,1600,6400,25600]#,40000,90000,160000,250000,360000]
 
+"""Starting iterative solution"""
 for volNumb in volsArr:
     
     t0 = time.time()
