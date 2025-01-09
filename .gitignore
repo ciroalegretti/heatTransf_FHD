@@ -4,7 +4,9 @@
 0 - Results_LDC/
 0 - Results_PP/
 
-grids/
+gridData*
+FVgrid*
+
 doc/
 nohup.out
 
