@@ -91,19 +91,21 @@ def createFolderHydro_PP(tag,Re,Le,h,volNumb,tol,dtFac,phi,Pe,alpha,Pr,Nu,i,ec,l
     print('Output folder created!')    
     os.chdir(pathHydro) 
 
-def createFolderHydro_LDC(tag,Re,volNumb,tol,dtFac,phi,Pe,alpha,Pr,Nu,i,h_data,lamb,ec):
+def createFolderHydro_LDC(tag,Re,volNumb,tol,dtFac,phi,Pe,alpha,Pr,Nu,i,h_data,lamb,beta_dt):
     
     if Re == 100.0 and Pr == 30.0:
         if volNumb == 6561:
-            Nu0 = 7.349
+            Nu0 = 7.349                  #grad T vert
+            # Nu0 = 10.0563                    #grad T horiz 
         elif volNumb == 10201:
-            Nu0 = 7.3609
-        else:
-            Nu0 = 1.0
-            print('No Nu_0 defined')
+            Nu0 = 7.3609                 #grad T vert
+            # Nu0 = 10.0799                  #grad T horiz 
+    else:
+        Nu0 = 1.0
+        print('No Nu_0 defined')
             
     # pathHydro = "./0 - Results_LDC/{}/Re={:.1E}_Pr={:.1f}_phi={:.1E}_lambda={:.1f}_Pe={:.1E}_alpha={:.2E}_Ec={:.2E}_{}vols_dtFac={}_{}kIt_psiMin={:.4f}_Nu0={:.4f}".format(tag,Re,Pr,phi,lamb,Pe,alpha,ec,volNumb,dtFac,int(i/1000),np.min(h_data[:volNumb,3]),Nu)
-    pathHydro = "./0 - Results_LDC/{}/Re={:.1E}_Pr={:.1f}_phi={:.1E}_lambda={:.1f}_Pe={:.1E}_alpha={:.1E}_Ec={:.1E}_{}vols_dtFac={}_{}kIt_psiMin={:.4f}_Nu|Nu0={:.4f}".format(tag,Re,Pr,phi,lamb,Pe,alpha,ec,volNumb,dtFac,int(i/1000),np.min(h_data[:volNumb,3]),Nu/Nu0)
+    pathHydro = "./0 - Results_LDC/{}/Re={:.1E}_Pr={:.1f}_phi={:.1E}_lambda={:.1f}_Pe={:.1E}_alpha={:.1E}_betaDt={:.1f}_{}vols_dtFac={}_{}kIt_psiMin={:.4f}_Nu|Nu0={:.4f}".format(tag,Re,Pr,phi,lamb,Pe,alpha,beta_dt,volNumb,dtFac,int(i/1000),np.min(h_data[:volNumb,3]),Nu/Nu0)
     os.makedirs(pathHydro)
     print('')
     print('Output folder created!')    
@@ -314,6 +316,21 @@ def calculate_tmTorque(volNumb,volArr,t_data,CVdata,modH):
         a += 1
 
     # tm_torque = np.nan_to_num(tm_torque)
+    
+    # Smoothing ghost volumes
+    for i in range(volNumb):
+        W = volArr[i,1]
+        N = volArr[i,2]
+        E = volArr[i,3]
+        S = volArr[i,4]
+        if W < 0:
+            tm_torque[W,1] = (5*tm_torque[i,1] - tm_torque[E,1])/4
+        if E < 0:
+            tm_torque[E,1] = (5*tm_torque[i,1] - tm_torque[W,1])/4
+        if N < 0:
+            tm_torque[N,1] = (5*tm_torque[i,1] - tm_torque[S,1])/4
+        if S < 0:
+            tm_torque[S,1] = (5*tm_torque[i,1] - tm_torque[N,1])/4
     
     return tm_torque
     

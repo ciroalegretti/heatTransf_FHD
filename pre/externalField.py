@@ -84,8 +84,8 @@ def getCoordPP(eh,L,h,dist,ratio):
         elif orient == 'vert': # Vertical
             x0 = 0.5*L	 
             y0 = 0 - dist
-            b = L/(2*ratio)
-            Lm = L
+            b = L/(ratio)
+            Lm = L/(ratio)
 
         return x0,y0,b,Lm    
 

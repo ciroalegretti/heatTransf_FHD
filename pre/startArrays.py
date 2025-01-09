@@ -46,9 +46,6 @@ def starters1d_LDC(fieldType,volArr,CVdata,alpha0,h,Le,eh,x0,y0,b,Lm,phi,beta,U)
     ### Set external magnetic field
     magData[:,3],magData[:,4],H0 = externalField.externalField(fieldType,eh,magData,volNumb,CVdata,x0,y0,b,Lm)
     
-    #  Setting initial magnetization as M0
-    magData,thermoData = equilibriumMag.equilibriumMag(magData,thermoData,phi,alpha0,beta,volNumb)
-
     # Applying hydrodynamic and thermal BC
     data = bc_uvPsi.bc_uvPsi_LDC(data,volArr,CVdata,h,U)
     thermoData = bc_theta.bc_theta_LDC(thermoData,volArr,CVdata)
