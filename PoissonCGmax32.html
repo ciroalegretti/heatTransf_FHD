@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>ex_pyflowchart.html</title>
+        <title>PoissonCGmax32.html</title>
         <style type="text/css">
           .end-element { fill : #FFCCFF; }
         </style>
@@ -205,104 +205,105 @@ function base64ToSvgDocument(base64) {
         </script>
     </head>
     <body>
-        <div><textarea id="code" style="width: 100%;" rows="11">op2=>operation: '\nrunLDC.py\n\nSteady-state solutions of the Graetz probLm under vorticity-stream\nfunction formulation with magnetic effects and heat transfer\n\nCreated on Wed Jul 28 19:07:43 2021\n\n@author: aLgretti\n'
-op4=>operation: from pre import loadGrid, defTimeStep, startArrays, externalField
-op6=>operation: from numerics.magnetization import equilibriumMag, equilibriumMagIvanov, solveMag
-op8=>operation: from numerics.vorticity import bc_vort, macCormack_w, vort_cgs
-op10=>operation: from numerics.energy import bc_theta, macCormack_theta, energy_cgs
-op12=>operation: from numerics.poisson import bc_uvPsi, uAndV, poisson_cg, eulerExp
-op14=>operation: from post import calcNu, dataOut, profilesOut
-op16=>operation: import numpy as np
-op18=>operation: import os
-op20=>operation: h = 0.5
-op22=>operation: L = (20.0 * h)
-op24=>operation: nx = 201
-op26=>operation: ny = 31
-op28=>operation: dtFac = 5.0
-op30=>operation: tol = 1e-06
-op32=>operation: volNumb = 6000
-op34=>operation: Pr = 30.0
-op36=>operation: Ec = 1e-06
-op38=>operation: beta_dt = 0.3
-op40=>operation: phiArr = [0.3]
-op42=>operation: PeArr = [0.01]
-op44=>operation: alphaArr = [1.0]
-op46=>operation: invGzArr = [0.025]
-op48=>operation: lambArr = [0.0]
-op50=>operation: outTag = 'update'
-op52=>operation: dist = 0
-op54=>operation: ratio = 8.0
-op56=>operation: profilesLoc = [2.025, 4.025, 5.025, 8.025]
-op58=>operation: magnetArr = ['vert']
-op60=>operation: fieldStyArr = ['clegg']
-cond63=>condition: for invGz in invGzArr
-cond13181=>condition: for Pe in PeArr
-cond19739=>condition: for alpha0 in alphaArr
-cond23017=>condition: for phi in phiArr
-cond24655=>condition: for magnet in magnetArr
-cond25473=>condition: for fieldSty in fieldStyArr
-cond25881=>condition: for lamb in lambArr
-op26083=>operation: Re = (L / (((2 * h) * invGz) * Pr))
-op26085=>operation: (volArr, volNodes, nodesCoord, x1, y1, CVdata, volNumb, nodeNumb, L, h, wallFunc) = loadGrid.loadGrid_PP(L, h, volNumb, nx, ny)
-op26087=>operation: eh = externalField.inputField(magnet)
-op26089=>operation: folderTag = '{}_{}_{}'.format(outTag, magnet, fieldSty)
-op26091=>operation: (x0, y0, b, Lm) = externalField.getCoordPP(eh, L, h, dist, ratio)
-op26093=>operation: dt = defTimeStep.dtMin(Re, Pr, dtFac, CVdata)
-op26095=>operation: (h_data, m_data, t_data, modH) = startArrays.starters1d_PP(fieldSty, volArr, CVdata, alpha0, h, L, eh, x0, y0, b, Lm, phi, beta_dt)
-op26097=>operation: (i, resPsi, resW, resTheta, energy_imbalance) = (0, 1.0, 1.0, 1.0, 1.0)
-cond26100=>condition: while (max(resW, resPsi, resTheta) > tol)
-op26174=>operation: 'Copying values before iteration'
-op26176=>operation: dataDummy = h_data.copy()
-op26178=>operation: m_dataDummy = m_data.copy()
-op26180=>operation: t_dataDummy = t_data.copy()
-op26182=>operation: 'Enforcing BC for stream function and velocity field'
-op26184=>operation: h_data = bc_uvPsi.bc_uvPsi_PP(h_data, volArr, CVdata, h)
-op26186=>operation: 'Solving Poisson equation for streamfunction'
-op26188=>operation: h_data = poisson_cg.poisson_cgs(volNumb, volArr, CVdata, h_data, dt)
-op26190=>operation: 'Calculating velocity field components'
-op26192=>operation: h_data = uAndV.calculateUandV(h_data, volArr, CVdata)
-op26194=>operation: 'Enforcing BC for vorticity'
-op26196=>operation: h_data = bc_vort.bc_w_PP(h_data, volArr, CVdata, h)
-op26198=>operation: 'Solving vorticity equation'
-op26200=>operation: h_data = vort_cgs.vort_cgs(volNumb, wallFunc, volArr, CVdata, h_data, m_data, t_data, dt, Re, Pe, phi)
-op26202=>operation: 'Enforcing temperature BC'
-op26204=>operation: t_data = bc_theta.bc_theta_PP(t_data, volArr, CVdata)
-op26206=>operation: 'Solving energy equation with magnetic source terms'
-op26208=>operation: t_data = energy_cgs.energy_cgs(volNumb, volArr, CVdata, wallFunc, h_data, t_data, m_data, phi, Ec, Re, Pe, Pr, dt)
-op26210=>operation: "Updating' alpha and equilibrium mag as temperature functions"
-op26212=>operation: (m_data, t_data) = equilibriumMag.equilibriumMag(m_data, t_data, phi, alpha0, beta_dt, volNumb)
-op26214=>operation: 'Solving magnetization equation'
-op26216=>operation: m_data = solveMag.ftcsMx(h_data, m_data, t_data, volArr, CVdata, volNodes, nodesCoord, dt, phi, Pe)
-op26218=>operation: m_data = solveMag.ftcsMy(h_data, m_data, t_data, volArr, CVdata, volNodes, nodesCoord, dt, phi, Pe)
-op26220=>operation: i += 1
-op26222=>operation: resTheta = np.max(np.abs((t_data[(:, 1)] - t_dataDummy[(:, 1)])))
-op26224=>operation: resPsi = np.max(np.abs((h_data[(:, 3)] - dataDummy[(:, 3)])))
-op26226=>operation: resW = np.max(np.abs((h_data[(:, 4)] - dataDummy[(:, 4)])))
-op26228=>operation: resMx = np.max(np.abs((m_data[(:, (- 2))] - m_dataDummy[(:, (- 2))])))
-op26230=>operation: resMy = np.max(np.abs((m_data[(:, (- 1))] - m_dataDummy[(:, (- 1))])))
-cond26233=>operation: print('{}k_it\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}\t {:.2E}\t| \t {:.2E}'.format(int((i / 1000)), resPsi, resW, resTheta, resMx, resMy, energy_imbalance)) if  (((i % 1000) == 0) and (i > 0))
-op26245=>operation: ' Post-processing and output'
-op26247=>operation: 'Enforcing BC for stream function and velocity field'
-op26249=>operation: h_data = bc_uvPsi.bc_uvPsi_PP(h_data, volArr, CVdata, h)
-op26251=>operation: 'Enforcing BC for vorticity'
-op26253=>operation: h_data = bc_vort.bc_w_PP(h_data, volArr, CVdata, h)
-op26255=>operation: 'Enforcing temperature BC'
-op26257=>operation: t_data = bc_theta.bc_theta_PP(t_data, volArr, CVdata)
-op26259=>operation: (Tm, xAll, Nu_x, Nu_AVG, uEnt, uThetaEnt, arr2d) = calcNu.calcNu2_PP(nx, ny, volArr, CVdata, volNumb, h_data, t_data, L, h)
-sub26261=>subroutine: dataOut.createFolderHydro_PP(folderTag, Re, L, h, volNumb, tol, dtFac, phi, Pe, alpha0, Pr, Nu_AVG, i, Ec, lamb)
-cond26264=>operation: profile = profilesOut.profilesOut(xpos, arr2d, CVdata, h_data, t_data, m_data, volArr, volNumb) while  xpos in profilesLoc
-sub26276=>subroutine: dataOut.exportDataPP(CVdata, h_data, m_data, t_data, volNumb, nodeNumb, volNodes, nodesCoord, modH, xAll, Tm, Nu_x, Nu_AVG)
-sub26278=>subroutine: os.chdir('../../../')
+        <div><textarea id="code" style="width: 100%;" rows="11">op2=>operation: '\nCreated on Thu Jan 20 15:10:58 2022\n\n@author: alegretti\n'
+op4=>operation: from pre import loadGrid
+op6=>operation: from pre import idNeighbors
+op8=>operation: import numpy as np
+op10=>operation: from numba import jit, prange
+op12=>operation: import time
+st15=>start: start poisson_cgsSonn
+io17=>inputoutput: input: MAZ, volnumb, volarr, cv, h_data, tol
+op20=>operation: 'Passo 1 - Inicializar vetores'
+op22=>operation: phi = np.zeros(len(cv))
+op24=>operation: Q = np.zeros(len(cv))
+op26=>operation: r0 = np.zeros(len(cv))
+op28=>operation: rk = np.zeros(len(cv))
+op30=>operation: Gk = np.zeros(len(cv))
+op32=>operation: v = np.zeros(len(cv))
+op34=>operation: A_dC = np.zeros(len(cv))
+op36=>operation: A_G = np.zeros(len(cv))
+op38=>operation: myfile = open('./0 - Results_CGSMaz/Ex{}_R2_{}vols_tol{:.1E}.dat'.format(MAZ, volnumb, tol), 'w')
+sub40=>subroutine: myfile.write('Variables="it","R2"\n')
+op42=>operation: 'Aplicando CC'
+cond45=>condition: for i in prange(volnumb)
+op160=>operation: (W, N, E, S) = idNeighbors.idNeighbors(volArr, i)
+cond163=>condition: if (MAZ == 1)
+op167=>operation: 'Maz 3.1'
+cond170=>operation: phi[W] = (1000 * ((((CVdata[(W, 2)] - (1 / 2)) ** 2) * np.sinh((CVdata[(W, 2)] - (1 / 2)))) + (((CVdata[(W, 3)] - (1 / 2)) ** 2) * np.sinh((CVdata[(W, 3)] - (1 / 2)))))) if  (W < 0)
+cond181=>operation: phi[E] = (1000 * ((((CVdata[(E, 2)] - (1 / 2)) ** 2) * np.sinh((CVdata[(E, 2)] - (1 / 2)))) + (((CVdata[(E, 3)] - (1 / 2)) ** 2) * np.sinh((CVdata[(E, 3)] - (1 / 2)))))) if  (E < 0)
+cond192=>operation: phi[S] = (1000 * ((((CVdata[(S, 2)] - (1 / 2)) ** 2) * np.sinh((CVdata[(S, 2)] - (1 / 2)))) + (((CVdata[(S, 3)] - (1 / 2)) ** 2) * np.sinh((CVdata[(S, 3)] - (1 / 2)))))) if  (S < 0)
+cond203=>operation: phi[N] = (1000 * ((((CVdata[(N, 2)] - (1 / 2)) ** 2) * np.sinh((CVdata[(N, 2)] - (1 / 2)))) + (((CVdata[(N, 3)] - (1 / 2)) ** 2) * np.sinh((CVdata[(N, 3)] - (1 / 2)))))) if  (N < 0)
+cond216=>condition: if (MAZ == 2)
+op220=>operation: 'Maz 3.2'
+cond223=>operation: phi[W] = (((((CVdata[(W, 2)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(W, 2)] - (1 / 2))))) + (((CVdata[(W, 3)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(W, 3)] - (1 / 2)))))) + np.exp(((2 * CVdata[(W, 2)]) * CVdata[(W, 3)]))) if  (W < 0)
+cond234=>operation: phi[E] = (((((CVdata[(E, 2)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(E, 2)] - (1 / 2))))) + (((CVdata[(E, 3)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(E, 3)] - (1 / 2)))))) + np.exp(((2 * CVdata[(E, 2)]) * CVdata[(E, 3)]))) if  (E < 0)
+cond245=>operation: phi[S] = (((((CVdata[(S, 2)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(S, 2)] - (1 / 2))))) + (((CVdata[(S, 3)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(S, 3)] - (1 / 2)))))) + np.exp(((2 * CVdata[(S, 2)]) * CVdata[(S, 3)]))) if  (S < 0)
+cond256=>operation: phi[N] = (((((CVdata[(N, 2)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(N, 2)] - (1 / 2))))) + (((CVdata[(N, 3)] - (1 / 2)) ** 2) * np.sinh((10 * (CVdata[(N, 3)] - (1 / 2)))))) + np.exp(((2 * CVdata[(N, 2)]) * CVdata[(N, 3)]))) if  (N < 0)
+op272=>operation: 'Termo independente do S.L.'
+cond275=>condition: for i in prange(volnumb)
+cond305=>condition: if (MAZ == 1)
+op309=>operation: 'Maz 3.1'
+op311=>operation: Q[i] = (((+ 1000) * (((2 * np.sinh((cv[(i, 2)] - (1 / 2)))) + ((4 * (cv[(i, 2)] - (1 / 2))) * np.cosh((cv[(i, 2)] - (1 / 2))))) + (((cv[(i, 2)] - (1 / 2)) ** 2) * np.sinh((cv[(i, 2)] - (1 / 2)))))) + (1000 * (((2 * np.sinh((cv[(i, 3)] - (1 / 2)))) + ((4 * (cv[(i, 3)] - (1 / 2))) * np.cosh((cv[(i, 3)] - (1 / 2))))) + (((cv[(i, 3)] - (1 / 2)) ** 2) * np.sinh((cv[(i, 3)] - (1 / 2)))))))
+cond317=>condition: if (MAZ == 2)
+op321=>operation: 'Maz 3.2'
+op323=>operation: Q[i] = (((((2 * np.sinh((10 * (cv[(i, 2)] - (1 / 2))))) + ((40 * (cv[(i, 2)] - (1 / 2))) * np.cosh((10 * (cv[(i, 2)] - (1 / 2)))))) + ((100 * ((cv[(i, 2)] - (1 / 2)) ** 2)) * np.sinh((10 * (cv[(i, 2)] - (1 / 2)))))) + (((2 * np.sinh((10 * (cv[(i, 3)] - (1 / 2))))) + ((40 * (cv[(i, 3)] - (1 / 2))) * np.cosh((10 * (cv[(i, 3)] - (1 / 2)))))) + ((100 * ((cv[(i, 3)] - (1 / 2)) ** 2)) * np.sinh((10 * (cv[(i, 3)] - (1 / 2))))))) + ((4 * ((cv[(i, 2)] ** 2) + (cv[(i, 3)] ** 2))) * np.exp(((2 * cv[(i, 2)]) * cv[(i, 3)]))))
+op330=>operation: R2 = 1.0
+op332=>operation: it_number = 0
+op334=>operation: it_max = volnumb
+op336=>operation: 'Passo 2 - Inicializar resíduo'
+cond339=>condition: for i in prange(volnumb)
+op352=>operation: dxV = cv[(i, 4)]
+op354=>operation: dyV = cv[(i, 5)]
+op356=>operation: (W, N, E, S) = idNeighbors.idNeighbors(volarr, i)
+op358=>operation: r0[i] = (((((Q[i] - ((((- (1 / dxV)) * ((1 / (cv[(E, 2)] - cv[(i, 2)])) + (1 / (cv[(i, 2)] - cv[(W, 2)])))) - ((1 / dyV) * ((1 / (cv[(N, 3)] - cv[(i, 3)])) + (1 / (cv[(i, 3)] - cv[(S, 3)]))))) * phi[i])) - (((+ 1) / (dxV * (cv[(E, 2)] - cv[(i, 2)]))) * phi[E])) - (((+ 1) / (dxV * (cv[(i, 2)] - cv[(W, 2)]))) * phi[W])) - (((+ 1) / (dyV * (cv[(N, 3)] - cv[(i, 3)]))) * phi[N])) - (((+ 1) / (dyV * (cv[(i, 3)] - cv[(S, 3)]))) * phi[S]))
+op362=>operation: 'Passo 3 - Inicializar vetores direção e direção conjugada'
+op364=>operation: d = r0
+op366=>operation: dC = r0
+op368=>operation: rk = r0
+cond371=>condition: while ((it_number < it_max) and (R2 > tol))
+op468=>operation: rOld = rk.copy()
+op470=>operation: dOld = d.copy()
+op472=>operation: 'Passo 4 - atualizar o avanço alpha^{n+1}'
+cond475=>condition: for i in prange(volnumb)
+op488=>operation: dxV = cv[(i, 4)]
+op490=>operation: dyV = cv[(i, 5)]
+op492=>operation: (W, N, E, S) = idNeighbors.idNeighbors(volarr, i)
+op494=>operation: v[i] = ((((((((- (1 / dxV)) * ((1 / (cv[(E, 2)] - cv[(i, 2)])) + (1 / (cv[(i, 2)] - cv[(W, 2)])))) - ((1 / dyV) * ((1 / (cv[(N, 3)] - cv[(i, 3)])) + (1 / (cv[(i, 3)] - cv[(S, 3)]))))) * dOld[i]) + (((+ 1) / (dxV * (cv[(E, 2)] - cv[(i, 2)]))) * dOld[E])) + (((+ 1) / (dxV * (cv[(i, 2)] - cv[(W, 2)]))) * dOld[W])) + (((+ 1) / (dyV * (cv[(N, 3)] - cv[(i, 3)]))) * dOld[N])) + (((+ 1) / (dyV * (cv[(i, 3)] - cv[(S, 3)]))) * dOld[S]))
+op498=>operation: alphak = (np.sum((r0 * rOld)) / np.sum((r0 * v)))
+op500=>operation: 'Passo 5 - atualizar o operador Gk'
+op502=>operation: Gk = (dC - (alphak * v))
+cond505=>condition: for i in prange(volnumb)
+op520=>operation: dxV = cv[(i, 4)]
+op522=>operation: dyV = cv[(i, 5)]
+op524=>operation: (W, N, E, S) = idNeighbors.idNeighbors(volarr, i)
+op526=>operation: A_dC[i] = ((((((((- (1 / dxV)) * ((1 / (cv[(E, 2)] - cv[(i, 2)])) + (1 / (cv[(i, 2)] - cv[(W, 2)])))) - ((1 / dyV) * ((1 / (cv[(N, 3)] - cv[(i, 3)])) + (1 / (cv[(i, 3)] - cv[(S, 3)]))))) * dC[i]) + (((+ 1) / (dxV * (cv[(E, 2)] - cv[(i, 2)]))) * dC[E])) + (((+ 1) / (dxV * (cv[(i, 2)] - cv[(W, 2)]))) * dC[W])) + (((+ 1) / (dyV * (cv[(N, 3)] - cv[(i, 3)]))) * dC[N])) + (((+ 1) / (dyV * (cv[(i, 3)] - cv[(S, 3)]))) * dC[S]))
+op528=>operation: A_G[i] = ((((((((- (1 / dxV)) * ((1 / (cv[(E, 2)] - cv[(i, 2)])) + (1 / (cv[(i, 2)] - cv[(W, 2)])))) - ((1 / dyV) * ((1 / (cv[(N, 3)] - cv[(i, 3)])) + (1 / (cv[(i, 3)] - cv[(S, 3)]))))) * Gk[i]) + (((+ 1) / (dxV * (cv[(E, 2)] - cv[(i, 2)]))) * Gk[E])) + (((+ 1) / (dxV * (cv[(i, 2)] - cv[(W, 2)]))) * Gk[W])) + (((+ 1) / (dyV * (cv[(N, 3)] - cv[(i, 3)]))) * Gk[N])) + (((+ 1) / (dyV * (cv[(i, 3)] - cv[(S, 3)]))) * Gk[S]))
+op532=>operation: 'Passo 6 - atualizar estimativa de phi'
+op534=>operation: phi += (alphak * (dC + Gk))
+op536=>operation: 'Passo 7 - Atualizar o resíduo e R2'
+op538=>operation: rk = (rOld - (alphak * (A_dC + A_G)))
+op540=>operation: R2 = np.sqrt(np.sum((rk * rk)))
+op542=>operation: 'Passo 8 - Calcular coef. de combinação'
+op544=>operation: beta = (np.sum((r0 * rk)) / np.sum((r0 * rOld)))
+op546=>operation: 'Passo 9 - Atualizar vetor direção conjugada'
+op548=>operation: dC = (rk + (beta * Gk))
+op550=>operation: 'Passo 10 - Atualizar vetor direção de busca'
+op552=>operation: d = (dC + (beta * (Gk + (beta * dOld))))
+sub554=>subroutine: print(it_number, R2)
+sub556=>subroutine: myfile.write('{} \t {:.5E} \n'.format(it_number, R2))
+op558=>operation: it_number += 1
+sub562=>subroutine: myfile.close()
+io567=>inputoutput: output:  (phi, it_number, Q)
+e565=>end: end function return
 
 op2->op4
 op4->op6
 op6->op8
 op8->op10
 op10->op12
-op12->op14
-op14->op16
-op16->op18
-op18->op20
+op12->st15
+st15->io17
+io17->op20
 op20->op22
 op22->op24
 op24->op26
@@ -312,83 +313,88 @@ op30->op32
 op32->op34
 op34->op36
 op36->op38
-op38->op40
-op40->op42
-op42->op44
-op44->op46
-op46->op48
-op48->op50
-op50->op52
-op52->op54
-op54->op56
-op56->op58
-op58->op60
-op60->cond63
-cond63(yes)->cond13181
-cond13181(yes)->cond19739
-cond19739(yes)->cond23017
-cond23017(yes)->cond24655
-cond24655(yes)->cond25473
-cond25473(yes)->cond25881
-cond25881(yes)->op26083
-op26083->op26085
-op26085->op26087
-op26087->op26089
-op26089->op26091
-op26091->op26093
-op26093->op26095
-op26095->op26097
-op26097->cond26100
-cond26100(yes)->op26174
-op26174->op26176
-op26176->op26178
-op26178->op26180
-op26180->op26182
-op26182->op26184
-op26184->op26186
-op26186->op26188
-op26188->op26190
-op26190->op26192
-op26192->op26194
-op26194->op26196
-op26196->op26198
-op26198->op26200
-op26200->op26202
-op26202->op26204
-op26204->op26206
-op26206->op26208
-op26208->op26210
-op26210->op26212
-op26212->op26214
-op26214->op26216
-op26216->op26218
-op26218->op26220
-op26220->op26222
-op26222->op26224
-op26224->op26226
-op26226->op26228
-op26228->op26230
-op26230->cond26233
-cond26233->cond26100
-cond26100(no)->op26245
-op26245->op26247
-op26247->op26249
-op26249->op26251
-op26251->op26253
-op26253->op26255
-op26255->op26257
-op26257->op26259
-op26259->sub26261
-sub26261->cond26264
-cond26264->sub26276
-sub26276->sub26278
-sub26278(left)->cond25881
-cond25881(no)->cond25473
-cond25473(no)->cond24655
-cond24655(no)->cond23017
-cond23017(no)->cond19739
-cond19739(no)->cond13181
-cond13181(no)->cond63
+op38->sub40
+sub40->op42
+op42->cond45
+cond45(yes)->op160
+op160->cond163
+cond163(yes)->op167
+op167->cond170
+cond170->cond181
+cond181->cond192
+cond192->cond203
+cond203->cond45
+cond163(no)->cond216
+cond216(yes)->op220
+op220->cond223
+cond223->cond234
+cond234->cond245
+cond245->cond256
+cond256->cond45
+cond216(no)->cond45
+cond45(no)->op272
+op272->cond275
+cond275(yes)->cond305
+cond305(yes)->op309
+op309->op311
+op311->cond317
+cond317(yes)->op321
+op321->op323
+op323->cond275
+cond317(no)->cond275
+cond305(no)->cond317
+cond275(no)->op330
+op330->op332
+op332->op334
+op334->op336
+op336->cond339
+cond339(yes)->op352
+op352->op354
+op354->op356
+op356->op358
+op358(left)->cond339
+cond339(no)->op362
+op362->op364
+op364->op366
+op366->op368
+op368->cond371
+cond371(yes)->op468
+op468->op470
+op470->op472
+op472->cond475
+cond475(yes)->op488
+op488->op490
+op490->op492
+op492->op494
+op494(left)->cond475
+cond475(no)->op498
+op498->op500
+op500->op502
+op502->cond505
+cond505(yes)->op520
+op520->op522
+op522->op524
+op524->op526
+op526->op528
+op528(left)->cond505
+cond505(no)->op532
+op532->op534
+op534->op536
+op536->op538
+op538->op540
+op540->op542
+op542->op544
+op544->op546
+op546->op548
+op548->op550
+op550->op552
+op552->sub554
+sub554->sub556
+sub556->op558
+op558(left)->cond371
+cond371(no)->sub562
+sub562->io567
+io567->e565
 </textarea></div>
         <div><button id="run" type="button">Run</button> <button onclick="HelpText()">Format Help</button></div>
         <div id="HelpTextBlock" style="display:none"><br/>Conditions can also be redirected like cond(yes, bottom) or cond(yes, right)

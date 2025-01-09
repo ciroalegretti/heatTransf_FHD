@@ -28,8 +28,8 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
     A_dC = np.zeros((len(cv)))
     A_G = np.zeros((len(cv)))
     
-    # myfile = open('./0 - Results_CGSMaz/Ex{}_R2_{}vols_tol{:.1E}.dat'.format(MAZ,volnumb,tol),'w')
-    # myfile.write('Variables="it","R2"\n')
+    myfile = open('./0 - Results_CGSMaz/Ex{}_R2_{}vols_tol{:.1E}.dat'.format(MAZ,volnumb,tol),'w')
+    myfile.write('Variables="it","R2"\n')
     
     """Aplicando CC"""
     # phi = bc_phiMaz(phi,volArr,cv)
@@ -166,13 +166,13 @@ def poisson_cgsSonn(MAZ,volnumb,volarr,cv,h_data,tol):
         """Passo 10 - Atualizar vetor direção de busca"""
         d = dC + beta*(Gk + beta*dOld)   
         
-        # print(it_number,R2)
-        # myfile.write('{} \t {:.5E} \n'.format(it_number,R2))
+        print(it_number,R2)
+        myfile.write('{} \t {:.5E} \n'.format(it_number,R2))
         
         it_number += 1
         
     
-    # myfile.close()
+    myfile.close()
     
     return phi,it_number,Q
 
