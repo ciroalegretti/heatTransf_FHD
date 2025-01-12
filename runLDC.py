@@ -19,7 +19,7 @@ from post import calcNu,dataOut,profilesOut
 import numpy as np
 import os
 # =============================================================================
-volNumb = 10201#[1681,6561,10201,25921]
+volNumb = 1681#[1681,6561,10201,25921]
 L = 1.0                 # Cavity width
 h = 1.0                 # Cavity height
 tol = 1E-8              # Numerical tolerance for the outer iteration
@@ -54,7 +54,7 @@ fieldSty = 'clegg'
 U = 1                   # Positive or negative lid velocity
 # =============================================================================
 # 
-#                               MAIN5 LOOP 
+#                               MAIN LOOP 
 # 
 # =============================================================================
 for phi in phiArr:
