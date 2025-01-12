@@ -14,7 +14,7 @@ Cases for three numerical models are available, which share functions from pre t
 
  - the Backward-Facing Step (BFS);
 
-![BFS_Re100](https://github.com/user-attachments/assets/20629d20-f49c-4cee-a505-f3d1126d86b1)( width=100)
+![BFS_Re100](https://github.com/user-attachments/assets/20629d20-f49c-4cee-a505-f3d1126d86b1 =100x100)
 ![BFS_contourW_vectorM_Rem_100](https://github.com/user-attachments/assets/ad91d1f6-34ed-4815-ae6f-a41a580f14bf | width=100)
 
 
