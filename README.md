@@ -13,23 +13,15 @@ The numerical implementation is based on a Finite Volume Method (FVM) discretiza
 Cases for three numerical models are available, which share functions from pre to post-processing steps in three classical benchmark problems in CFD:
 
  - the Backward-Facing Step (BFS);
-
-
 <img src="figs/BFS_Re100.png" width="600">
 <img src="figs/BFS_contourW_vectorM_Rem_100.png" width="600">
 
  - the Lid-Driven Cavity (LDC);
-
 <img src="figs/LDC_fig1.png" width="600">
-
 <img src="figs/LDC_fig8.png" width="600">
 
  - the Parallel Plates channel (PP).
-
 <img src="figs/PP_contourVarGz.png" width="600">
-
-
-  
  
 Scripts for the grid generation are available in /grids. Grid volumes and domain lenghts must be set coincidently in both grid generation scripts ("/grids/[case]gridGen.py") as in the solution scripts ("./run[case].py").
 
