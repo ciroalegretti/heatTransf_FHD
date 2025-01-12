@@ -22,7 +22,7 @@ A validation of the linear system iterative solution by the Conjugate Gradient S
 
 # Associated publications
 
-Alegretti, C. F., and R. G. Gontijo. "New insights on boundary layer control using magnetic fluids: A numerical study." Journal of Magnetism and Magnetic Materials 514 (2020): 167133.
+ - Alegretti, C. F., and R. G. Gontijo. "New insights on boundary layer control using magnetic fluids: A numerical study." Journal of Magnetism and Magnetic Materials 514 (2020): 167133.
 
-Alegretti, C. F., and R. G. Gontijo. "A numerical study on the role of dipole interactions on the heat transfer rates in a ferrofluid shear flow." Journal of Magnetism and Magnetic Materials 587 (2023): 171243.
+ - Alegretti, C. F., and R. G. Gontijo. "A numerical study on the role of dipole interactions on the heat transfer rates in a ferrofluid shear flow." Journal of Magnetism and Magnetic Materials 587 (2023): 171243.
 
