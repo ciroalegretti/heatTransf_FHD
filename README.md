@@ -26,9 +26,9 @@ Cases for three numerical models are available, which share functions from pre t
 
  - the Parallel Plates channel (PP).
 
-<img src="figs/PP_contourVarGz.png" width="400" height="200">
+<img src="figs/PP_contourVarGz.png" width="600">
 
-![PP_contourVarGz](https://github.com/user-attachments/assets/ffa73de3-fbe3-411d-b262-2bcc818fa5c9 | width=100)
+
   
  
 Scripts for the grid generation are available in /grids. Grid volumes and domain lenghts must be set coincidently in both grid generation scripts ("/grids/[case]gridGen.py") as in the solution scripts ("./run[case].py").
