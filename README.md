@@ -15,9 +15,10 @@ Cases for three numerical models are available, which share functions from pre t
  - the Backward-Facing Step (BFS);
 
  <div align="center">
-    <img src="figs/BFS_Re100.png" width = "50%" />
-    <img src="figs/BFS_contourW_vectorM_Rem_100.png" width = "50%" />
+    <img  width = "50%" src="figs/BFS_Re100.png" />
+    <img  width = "50%" src="figs/BFS_contourW_vectorM_Rem_100.png" />
  </div>
+ 
  - the Lid-Driven Cavity (LDC);
 <img src="figs/LDC_fig1.png" width="600">
 <img src="figs/LDC_fig8.png" width="600">
