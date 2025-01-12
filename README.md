@@ -15,14 +15,14 @@ Cases for three numerical models are available, which share functions from pre t
  - the Backward-Facing Step (BFS);
 
 
-<img src="figs/BFS_Re100.png" width="400" height="200">
-<img src="figs/BFS_contourW_vectorM_Rem_100.png" width="400" height="200">
+<img src="figs/BFS_Re100.png" width="600">
+<img src="figs/BFS_contourW_vectorM_Rem_100.png" width="600">
 
  - the Lid-Driven Cavity (LDC);
 
-<img src="figs/LDC_fig1.png" width="400" height="200">
+<img src="figs/LDC_fig1.png" width="600">
 
-<img src="figs/LDC_fig8.png" width="400" height="200">
+<img src="figs/LDC_fig8.png" width="600">
 
  - the Parallel Plates channel (PP).
 
