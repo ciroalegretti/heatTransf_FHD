@@ -14,16 +14,19 @@ Cases for three numerical models are available, which share functions from pre t
 
  - the Backward-Facing Step (BFS);
 
-![BFS_Re100](https://github.com/user-attachments/assets/20629d20-f49c-4cee-a505-f3d1126d86b1 =100x100)
-![BFS_contourW_vectorM_Rem_100](https://github.com/user-attachments/assets/ad91d1f6-34ed-4815-ae6f-a41a580f14bf | width=100)
 
+<img src="figs/BFS_Re100.png" width="400" height="200">
+<img src="figs/BFS_contourW_vectorM_Rem_100.png" width="400" height="200">
 
  - the Lid-Driven Cavity (LDC);
 
-![LDC_fig1](https://github.com/user-attachments/assets/8c1222f6-218c-43e0-a53f-6dab7bb93ac5 | width=100)
- ![LDC_fig8](https://github.com/user-attachments/assets/708fee01-d119-4219-9ec8-5a300460c590 | width=100)
+<img src="figs/LDC_fig1.png" width="400" height="200">
+
+<img src="figs/LDC_fig8.png" width="400" height="200">
 
  - the Parallel Plates channel (PP).
+
+<img src="figs/PP_contourVarGz.png" width="400" height="200">
 
 ![PP_contourVarGz](https://github.com/user-attachments/assets/ffa73de3-fbe3-411d-b262-2bcc818fa5c9 | width=100)
   
